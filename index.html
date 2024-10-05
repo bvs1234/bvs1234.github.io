@@ -114,6 +114,7 @@
   <table id="hostelTable">
     <thead>
       <tr>
+        <th>S.No</th> <!-- Serial Number Column -->
         <th>Hostel Name</th>
         <th>Phone Number</th>
         <th>Area</th>
@@ -154,9 +155,11 @@
           tbody.innerHTML = ''; // Clear previous data
 
           // Add rows to the table based on the fetched data
-          data.data.forEach(row => {
+          data.data.forEach((row, index) => {
+            const serialNumber = (page - 1) * rowsPerPage + index + 1; // Calculate serial number
             const tr = document.createElement('tr');
             tr.innerHTML = `
+              <td>${serialNumber}</td>
               <td>${row.hostelName}</td>
               <td>${row.phoneNumber}</td>
               <td>${row.area}</td>
