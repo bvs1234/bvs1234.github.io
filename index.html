@@ -36,6 +36,21 @@
       font-size: 18px;
       border-radius: 5px;
       border: 2px solid #007bff;
+      margin-right: 10px; /* Space between select and button */
+    }
+
+    #fetchButton {
+      padding: 10px 20px;
+      font-size: 18px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    #fetchButton:hover {
+      background-color: #0056b3; /* Darker blue on hover */
     }
 
     table {
@@ -72,12 +87,13 @@
 </head>
 <body>
 
-  <!-- Container for the "Select State" label and dropdown, now on the same line -->
+  <!-- Container for the "Select State" label, dropdown, and button -->
   <div class="container">
     <label for="stateSelect">Select State:</label>
     <select id="stateSelect">
       <option value="">--Select a State--</option>
     </select>
+    <button id="fetchButton">Fetch Data</button>
   </div>
 
   <!-- Table for hostel data -->
@@ -162,9 +178,9 @@
       }
     }
 
-    // Listen for changes in the dropdown and fetch data accordingly
-    document.getElementById('stateSelect').addEventListener('change', function() {
-      currentState = this.value;
+    // Listen for changes in the dropdown and fetch data on button click
+    document.getElementById('fetchButton').addEventListener('click', function() {
+      currentState = document.getElementById('stateSelect').value;
       currentPage = 1;
       fetchHostelData(currentState, currentPage);
     });
