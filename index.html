@@ -16,7 +16,6 @@
       margin: 0;
       padding: 20px;
       box-sizing: border-box;
-      user-select: none; /* Disable text selection */
     }
 
     .container {
@@ -98,18 +97,6 @@
       background-color: #0056b3;
     }
 
-    /* Glass pane to cover only the table, not the controls */
-    .glass-pane {
-      position: absolute;
-      top: 350px; /* Set to the height after the dropdown and button */
-      left: 0;
-      width: 100%;
-      height: calc(100% - 350px); /* Adjust height to cover below the controls */
-      background-color: rgba(255, 255, 255, 0); /* Fully transparent */
-      z-index: 9999; /* Ensure it's on top */
-      pointer-events: none; /* Allow interaction with underlying elements */
-    }
-
     /* Media query for mobile screens */
     @media (max-width: 768px) {
       body {
@@ -155,10 +142,7 @@
     }
   </style>
 </head>
-<body oncontextmenu="return false"> <!-- Disable right-click -->
-
-  <!-- Glass pane covering only the data table -->
-  <div class="glass-pane"></div>
+<body>
 
   <div class="container">
     <label for="stateSelect">Select State:</label>
@@ -250,6 +234,7 @@
       currentPage = 1;
       fetchHostelData(currentState, currentPage);
     });
+
   </script>
 
 </body>
