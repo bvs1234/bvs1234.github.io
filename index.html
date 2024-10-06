@@ -98,15 +98,16 @@
       background-color: #0056b3;
     }
 
-    /* Glass pane */
+    /* Glass pane to cover only the table, not the controls */
     .glass-pane {
       position: absolute;
-      top: 200px; /* Start below the controls */
+      top: 350px; /* Set to the height after the dropdown and button */
       left: 0;
       width: 100%;
-      height: calc(100% - 200px); /* Cover everything below the first 200px */
+      height: calc(100% - 350px); /* Adjust height to cover below the controls */
       background-color: rgba(255, 255, 255, 0); /* Fully transparent */
       z-index: 9999; /* Ensure it's on top */
+      pointer-events: none; /* Allow interaction with underlying elements */
     }
 
     /* Media query for mobile screens */
@@ -156,7 +157,7 @@
 </head>
 <body oncontextmenu="return false"> <!-- Disable right-click -->
 
-  <!-- Glass pane to cover content but leave controls clickable -->
+  <!-- Glass pane covering only the data table -->
   <div class="glass-pane"></div>
 
   <div class="container">
