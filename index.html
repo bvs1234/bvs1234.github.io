@@ -101,10 +101,10 @@
     /* Glass pane */
     .glass-pane {
       position: absolute;
-      top: 0;
+      top: 200px; /* Start below the controls */
       left: 0;
       width: 100%;
-      height: 100%;
+      height: calc(100% - 200px); /* Cover everything below the first 200px */
       background-color: rgba(255, 255, 255, 0); /* Fully transparent */
       z-index: 9999; /* Ensure it's on top */
     }
@@ -156,7 +156,7 @@
 </head>
 <body oncontextmenu="return false"> <!-- Disable right-click -->
 
-  <!-- Glass pane to prevent interaction -->
+  <!-- Glass pane to cover content but leave controls clickable -->
   <div class="glass-pane"></div>
 
   <div class="container">
