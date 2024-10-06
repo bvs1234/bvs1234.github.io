@@ -36,7 +36,7 @@
       font-size: 18px;
       border-radius: 5px;
       border: 2px solid #28a745;
-      margin-right: 10px; /* Space between select and button */
+      margin-right: 10px;
     }
 
     #fetchButton {
@@ -50,7 +50,7 @@
     }
 
     #fetchButton:hover {
-      background-color: #28a745; /* Darker blue on hover */
+      background-color: #28a745;
     }
 
     table {
@@ -67,17 +67,16 @@
     }
 
     th {
-      background: linear-gradient(to right, #007bff, #00bfff); /* Gradient background */
-      color: white; /* White text color */
+      background: linear-gradient(to right, #007bff, #00bfff);
+      color: white;
     }
 
     td {
-      background-color: #ffffff; /* White background for table data */
+      background-color: #ffffff;
     }
 
-    /* Alternating row colors */
     tbody tr:nth-child(even) {
-      background-color: #f2f2f2; /* Gray background for even rows */
+      background-color: #f2f2f2;
     }
 
     #pagination {
@@ -95,13 +94,56 @@
     }
 
     .page-link:hover {
-      background-color: #0056b3; /* Darker blue on hover */
+      background-color: #0056b3;
+    }
+
+    /* Media query for mobile screens */
+    @media (max-width: 768px) {
+      body {
+        padding: 10px;
+      }
+
+      .container {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      label {
+        margin-bottom: 10px;
+        font-size: 20px;
+      }
+
+      #stateSelect, #fetchButton {
+        width: 100%;
+        font-size: 16px;
+        margin: 0 0 10px 0;
+      }
+
+      table {
+        display: block;
+        overflow-x: auto;
+        width: 100%;
+        max-width: none;
+      }
+
+      th, td {
+        font-size: 14px;
+        padding: 8px;
+      }
+
+      #pagination {
+        flex-wrap: wrap;
+      }
+
+      .page-link {
+        padding: 8px;
+        font-size: 14px;
+      }
     }
   </style>
 </head>
 <body>
 
-  <!-- Container for the "Select State" label, dropdown, and button -->
   <div class="container">
     <label for="stateSelect">Select State:</label>
     <select id="stateSelect">
@@ -110,11 +152,10 @@
     <button id="fetchButton">Fetch Data</button>
   </div>
 
-  <!-- Table for hostel data -->
   <table id="hostelTable">
     <thead>
       <tr>
-        <th>S.No</th> <!-- Serial Number Column -->
+        <th>S.No</th>
         <th>Hostel Name</th>
         <th>Phone Number</th>
         <th>Area</th>
@@ -124,7 +165,6 @@
     <tbody></tbody>
   </table>
 
-  <!-- Pagination controls -->
   <div id="pagination"></div>
 
   <script>
@@ -133,7 +173,6 @@
     let currentPage = 1;
     const rowsPerPage = 100;
 
-    // Fetch states from the API and populate the dropdown
     fetch(`${apiUrl}?getStates=true`)
       .then(response => response.json())
       .then(data => {
@@ -146,17 +185,15 @@
         });
       });
 
-    // Fetch hostel data based on state and page selection
     function fetchHostelData(state, page) {
       fetch(`${apiUrl}?state=${state}&page=${page}`)
         .then(response => response.json())
         .then(data => {
           const tbody = document.querySelector('#hostelTable tbody');
-          tbody.innerHTML = ''; // Clear previous data
+          tbody.innerHTML = '';
 
-          // Add rows to the table based on the fetched data
           data.data.forEach((row, index) => {
-            const serialNumber = (page - 1) * rowsPerPage + index + 1; // Calculate serial number
+            const serialNumber = (page - 1) * rowsPerPage + index + 1;
             const tr = document.createElement('tr');
             tr.innerHTML = `
               <td>${serialNumber}</td>
@@ -168,24 +205,21 @@
             tbody.appendChild(tr);
           });
 
-          // Set up pagination
           setupPagination(data.total, page);
         });
     }
 
-    // Setup pagination based on total rows and current page
     function setupPagination(totalRows, currentPage) {
       const paginationDiv = document.getElementById('pagination');
-      paginationDiv.innerHTML = ''; // Clear previous pagination links
+      paginationDiv.innerHTML = '';
       const totalPages = Math.ceil(totalRows / rowsPerPage);
 
-      // Create pagination links dynamically
       for (let i = 1; i <= totalPages; i++) {
         const pageLink = document.createElement('span');
         pageLink.textContent = i;
         pageLink.classList.add('page-link');
         if (i === currentPage) {
-          pageLink.style.backgroundColor = '#0056b3'; // Highlight current page
+          pageLink.style.backgroundColor = '#0056b3';
         }
         pageLink.addEventListener('click', () => {
           currentPage = i;
@@ -195,7 +229,6 @@
       }
     }
 
-    // Listen for changes in the dropdown and fetch data on button click
     document.getElementById('fetchButton').addEventListener('click', function() {
       currentState = document.getElementById('stateSelect').value;
       currentPage = 1;
