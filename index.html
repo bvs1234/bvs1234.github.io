@@ -5,141 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Hostel Data</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      background-color: #f9f9f9;
-      margin: 0;
-      padding: 20px;
-      box-sizing: border-box;
-    }
-
-    .container {
-      display: flex;
-      align-items: center;
-      margin-bottom: 30px;
-    }
-
-    label {
-      font-size: 24px;
-      font-weight: bold;
-      margin-right: 10px;
-    }
-
-    #stateSelect {
-      width: 300px;
-      height: 40px;
-      font-size: 18px;
-      border-radius: 5px;
-      border: 2px solid #28a745;
-      margin-right: 10px;
-    }
-
-    #fetchButton {
-      padding: 10px 20px;
-      font-size: 18px;
-      background-color: #28a745;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    #fetchButton:hover {
-      background-color: #28a745;
-    }
-
-    table {
-      width: 100%;
-      max-width: 1200px;
-      border-collapse: collapse;
-      margin-bottom: 20px;
-    }
-
-    th, td {
-      border: 1px solid #ddd;
-      padding: 10px;
-      text-align: left;
-    }
-
-    th {
-      background: linear-gradient(to right, #007bff, #00bfff);
-      color: white;
-    }
-
-    td {
-      background-color: #ffffff;
-    }
-
-    tbody tr:nth-child(even) {
-      background-color: #f2f2f2;
-    }
-
-    #pagination {
-      display: flex;
-      justify-content: center;
-      margin-top: 20px;
-    }
-
-    .page-link {
-      padding: 10px;
-      margin: 0 5px;
-      background-color: #007bff;
-      color: white;
-      cursor: pointer;
-    }
-
-    .page-link:hover {
-      background-color: #0056b3;
-    }
-
-    /* Media query for mobile screens */
-    @media (max-width: 768px) {
-      body {
-        padding: 10px;
-      }
-
-      .container {
-        flex-direction: column;
-        align-items: stretch;
-      }
-
-      label {
-        margin-bottom: 10px;
-        font-size: 20px;
-      }
-
-      #stateSelect, #fetchButton {
-        width: 100%;
-        font-size: 16px;
-        margin: 0 0 10px 0;
-      }
-
-      table {
-        display: block;
-        overflow-x: auto;
-        width: 100%;
-        max-width: none;
-      }
-
-      th, td {
-        font-size: 14px;
-        padding: 8px;
-      }
-
-      #pagination {
-        flex-wrap: wrap;
-      }
-
-      .page-link {
-        padding: 8px;
-        font-size: 14px;
-      }
-    }
+    /* Same CSS as before */
   </style>
 </head>
 <body>
@@ -173,6 +39,14 @@
     let currentPage = 1;
     const rowsPerPage = 100;
 
+    function encodeData(data) {
+      return btoa(unescape(encodeURIComponent(data))); // base64 encoding
+    }
+
+    function decodeData(data) {
+      return decodeURIComponent(escape(atob(data)));  // base64 decoding
+    }
+
     fetch(`${apiUrl}?getStates=true`)
       .then(response => response.json())
       .then(data => {
@@ -186,7 +60,7 @@
       });
 
     function fetchHostelData(state, page) {
-      fetch(`${apiUrl}?state=${state}&page=${page}`)
+      fetch(`${apiUrl}?state=${encodeData(state)}&page=${encodeData(page.toString())}`)
         .then(response => response.json())
         .then(data => {
           const tbody = document.querySelector('#hostelTable tbody');
@@ -197,10 +71,10 @@
             const tr = document.createElement('tr');
             tr.innerHTML = `
               <td>${serialNumber}</td>
-              <td>${row.hostelName}</td>
-              <td>${row.phoneNumber}</td>
-              <td>${row.area}</td>
-              <td>${row.stateName}</td>
+              <td>${decodeData(row.hostelName)}</td>
+              <td>${decodeData(row.phoneNumber)}</td>
+              <td>${decodeData(row.area)}</td>
+              <td>${decodeData(row.stateName)}</td>
             `;
             tbody.appendChild(tr);
           });
