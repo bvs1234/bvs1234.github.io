@@ -160,6 +160,7 @@
     let currentPage = 1;
     const rowsPerPage = 100;
 
+    // Fetch list of cities on page load
     fetch(`${apiUrl}?getCities=true`)
       .then(response => response.json())
       .then(data => {
@@ -172,12 +173,19 @@
         });
       });
 
+    // Fetch and display hostel data based on city and pagination
     function fetchHostelData(city, page) {
       fetch(`${apiUrl}?city=${city}&page=${page}`)
         .then(response => response.json())
         .then(data => {
           const boxesContainer = document.getElementById('hostelBoxes');
           boxesContainer.innerHTML = '';
+
+          if (data.data.length === 0) {
+            boxesContainer.innerHTML = '<p>No hostels found for this city.</p>';
+            document.getElementById('pagination').innerHTML = ''; // Clear pagination
+            return;
+          }
 
           data.data.forEach((row, index) => {
             const box = document.createElement('div');
@@ -193,9 +201,13 @@
           });
 
           setupPagination(data.total, page);
+        })
+        .catch(error => {
+          console.error('Error fetching data:', error);
         });
     }
 
+    // Setup pagination links
     function setupPagination(totalRows, currentPage) {
       const paginationDiv = document.getElementById('pagination');
       paginationDiv.innerHTML = '';
@@ -216,10 +228,15 @@
       }
     }
 
+    // Fetch data when the "Fetch Data" button is clicked
     document.getElementById('fetchButton').addEventListener('click', function() {
       currentCity = document.getElementById('citySelect').value;
-      currentPage = 1;
-      fetchHostelData(currentCity, currentPage);
+      if (currentCity) {
+        currentPage = 1; // Reset to first page when city is changed
+        fetchHostelData(currentCity, currentPage);
+      } else {
+        alert('Please select a city.');
+      }
     });
   </script>
 
