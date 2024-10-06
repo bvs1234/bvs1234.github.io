@@ -30,7 +30,7 @@
       margin-right: 10px;
     }
 
-    #stateSelect {
+    #citySelect {
       width: 300px;
       height: 40px;
       font-size: 18px;
@@ -113,7 +113,7 @@
         font-size: 20px;
       }
 
-      #stateSelect, #fetchButton {
+      #citySelect, #fetchButton {
         width: 100%;
         font-size: 16px;
         margin: 0 0 10px 0;
@@ -143,9 +143,9 @@
 <body>
 
   <div class="container">
-    <label for="stateSelect">Select State:</label>
-    <select id="stateSelect">
-      <option value="">--Select a State--</option>
+    <label for="citySelect">Select City:</label>
+    <select id="citySelect">
+      <option value="">--Select a City--</option>
     </select>
     <button id="fetchButton">Fetch Data</button>
   </div>
@@ -156,24 +156,24 @@
 
   <script>
     const apiUrl = 'https://script.google.com/macros/s/AKfycbyU5wCGBBAYNss4v5OLiDoU9V-olOVOMDuek_uLfoKMT_BegW9F-ottGLNsUdp4IH7X/exec';
-    let currentState = '';
+    let currentCity = '';
     let currentPage = 1;
     const rowsPerPage = 100;
 
-    fetch(`${apiUrl}?getStates=true`)
+    fetch(`${apiUrl}?getCities=true`)
       .then(response => response.json())
       .then(data => {
-        const stateSelect = document.getElementById('stateSelect');
-        data.states.forEach(state => {
+        const citySelect = document.getElementById('citySelect');
+        data.cities.forEach(city => {
           const option = document.createElement('option');
-          option.value = state;
-          option.textContent = state;
-          stateSelect.appendChild(option);
+          option.value = city;
+          option.textContent = city;
+          citySelect.appendChild(option);
         });
       });
 
-    function fetchHostelData(state, page) {
-      fetch(`${apiUrl}?state=${state}&page=${page}`)
+    function fetchHostelData(city, page) {
+      fetch(`${apiUrl}?city=${city}&page=${page}`)
         .then(response => response.json())
         .then(data => {
           const boxesContainer = document.getElementById('hostelBoxes');
@@ -187,7 +187,7 @@
               <p><strong>Hostel Name:</strong> ${row.hostelName}</p>
               <p><strong>Phone Number:</strong> ${row.phoneNumber}</p>
               <p><strong>Area:</strong> ${row.area}</p>
-              <p><strong>State:</strong> ${row.stateName}</p>
+              <p><strong>City:</strong> ${row.cityName}</p>
             `;
             boxesContainer.appendChild(box);
           });
@@ -210,16 +210,16 @@
         }
         pageLink.addEventListener('click', () => {
           currentPage = i;
-          fetchHostelData(currentState, currentPage);
+          fetchHostelData(currentCity, currentPage);
         });
         paginationDiv.appendChild(pageLink);
       }
     }
 
     document.getElementById('fetchButton').addEventListener('click', function() {
-      currentState = document.getElementById('stateSelect').value;
+      currentCity = document.getElementById('citySelect').value;
       currentPage = 1;
-      fetchHostelData(currentState, currentPage);
+      fetchHostelData(currentCity, currentPage);
     });
   </script>
 
