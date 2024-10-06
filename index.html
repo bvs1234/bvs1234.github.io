@@ -53,30 +53,29 @@
       background-color: #28a745;
     }
 
-    table {
-      width: 100%;
-      max-width: 1200px;
-      border-collapse: collapse;
-      margin-bottom: 20px;
+    .box {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      border: 2px solid #ddd;
+      border-radius: 10px;
+      padding: 20px;
+      margin: 10px;
+      width: 250px;
+      background-color: white;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
     }
 
-    th, td {
-      border: 1px solid #ddd;
-      padding: 10px;
-      text-align: left;
+    .box p {
+      margin: 5px 0;
+      font-size: 16px;
     }
 
-    th {
-      background: linear-gradient(to right, #007bff, #00bfff);
-      color: white;
-    }
-
-    td {
-      background-color: #ffffff;
-    }
-
-    tbody tr:nth-child(even) {
-      background-color: #f2f2f2;
+    .boxes-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
     }
 
     #pagination {
@@ -91,6 +90,7 @@
       background-color: #007bff;
       color: white;
       cursor: pointer;
+      border-radius: 5px;
     }
 
     .page-link:hover {
@@ -119,16 +119,14 @@
         margin: 0 0 10px 0;
       }
 
-      table {
-        display: block;
-        overflow-x: auto;
-        width: 100%;
-        max-width: none;
+      .boxes-container {
+        flex-direction: column;
+        align-items: center;
       }
 
-      th, td {
-        font-size: 14px;
-        padding: 8px;
+      .box {
+        width: 100%;
+        max-width: 300px;
       }
 
       #pagination {
@@ -152,18 +150,7 @@
     <button id="fetchButton">Fetch Data</button>
   </div>
 
-  <table id="hostelTable">
-    <thead>
-      <tr>
-        <th>S.No</th>
-        <th>Hostel Name</th>
-        <th>Phone Number</th>
-        <th>Area</th>
-        <th>State</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+  <div class="boxes-container" id="hostelBoxes"></div>
 
   <div id="pagination"></div>
 
@@ -189,20 +176,20 @@
       fetch(`${apiUrl}?state=${state}&page=${page}`)
         .then(response => response.json())
         .then(data => {
-          const tbody = document.querySelector('#hostelTable tbody');
-          tbody.innerHTML = '';
+          const boxesContainer = document.getElementById('hostelBoxes');
+          boxesContainer.innerHTML = '';
 
           data.data.forEach((row, index) => {
-            const serialNumber = (page - 1) * rowsPerPage + index + 1;
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-              <td>${serialNumber}</td>
-              <td>${row.hostelName}</td>
-              <td>${row.phoneNumber}</td>
-              <td>${row.area}</td>
-              <td>${row.stateName}</td>
+            const box = document.createElement('div');
+            box.classList.add('box');
+            box.innerHTML = `
+              <p><strong>S.No:</strong> ${(page - 1) * rowsPerPage + index + 1}</p>
+              <p><strong>Hostel Name:</strong> ${row.hostelName}</p>
+              <p><strong>Phone Number:</strong> ${row.phoneNumber}</p>
+              <p><strong>Area:</strong> ${row.area}</p>
+              <p><strong>State:</strong> ${row.stateName}</p>
             `;
-            tbody.appendChild(tr);
+            boxesContainer.appendChild(box);
           });
 
           setupPagination(data.total, page);
@@ -234,7 +221,6 @@
       currentPage = 1;
       fetchHostelData(currentState, currentPage);
     });
-
   </script>
 
 </body>
