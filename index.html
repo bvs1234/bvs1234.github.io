@@ -1,9 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Hostels</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            color: #333;
+        }
+        label {
+            margin-top: 10px;
+            display: block;
+        }
+        select {
+            margin: 10px 0;
+            padding: 8px;
+            width: 100%;
+        }
+        button {
+            padding: 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #hostelInfo {
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
     <h1>Find Hostels</h1>
     <label for="citySelect">Select City:</label>
     <select id="citySelect" onchange="populateAreas()">
-        <option value="">Select City</option>
     <option value="">Select a city</option>
     <option value="Bhubaneswar">Bhubaneswar</option>
     <option value="Bangalore">Bangalore</option>
