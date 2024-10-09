@@ -30,8 +30,8 @@
       margin-right: 10px;
     }
 
-    #citySelect {
-      width: 300px;
+    #citySelect, #areaSelect {
+      width: 200px;
       height: 40px;
       font-size: 18px;
       border-radius: 5px;
@@ -95,7 +95,7 @@
     }
 
     .whatsapp-button {
-      background-color: #25D366; /* WhatsApp green color */
+      background-color: #25D366;
     }
 
     .call-button:hover {
@@ -132,7 +132,6 @@
       background-color: #0056b3;
     }
 
-    /* Media query for mobile screens */
     @media (max-width: 768px) {
       body {
         padding: 10px;
@@ -148,7 +147,7 @@
         font-size: 20px;
       }
 
-      #citySelect, #fetchButton {
+      #citySelect, #areaSelect, #fetchButton {
         width: 100%;
         font-size: 16px;
         margin: 0 0 10px 0;
@@ -182,21 +181,25 @@
     <select id="citySelect">
       <option value="">--Select a City--</option>
     </select>
+    
+    <label for="areaSelect">Select Area:</label>
+    <select id="areaSelect">
+      <option value="">--Select an Area--</option>
+    </select>
+    
     <button id="fetchButton">Fetch Data</button>
   </div>
 
   <div class="boxes-container" id="hostelBoxes"></div>
-
   <div id="pagination"></div>
 
   <script>
-    // Updated App Script URL
     const apiUrl = 'https://script.google.com/macros/s/AKfycbwdpB_uLxzvOZJAO6U3Uof8pFJBqjVFhFZUchhgZcvUNjm2egDaXZgzPb-8UIRNRl54IA/exec';
     let currentCity = '';
+    let currentArea = '';
     let currentPage = 1;
     const rowsPerPage = 100;
 
-    // Fetch list of cities on page load
     fetch(`${apiUrl}?getCities=true`)
       .then(response => response.json())
       .then(data => {
@@ -209,22 +212,55 @@
         });
       });
 
-    // Fetch and display hostel data based on city and pagination
-    function fetchHostelData(city, page) {
-      fetch(`${apiUrl}?city=${city}&page=${page}`)
+    document.getElementById('citySelect').addEventListener('change', function() {
+      const selectedCity = this.value;
+      currentCity = selectedCity;
+      if (selectedCity) {
+        fetch(`${apiUrl}?city=${selectedCity}&getAreas=true`)
+          .then(response => response.json())
+          .then(data => {
+            const areaSelect = document.getElementById('areaSelect');
+            areaSelect.innerHTML = '<option value="">--Select an Area--</option>';
+            data.areas.forEach(area => {
+              const option = document.createElement('option');
+              option.value = area;
+              option.textContent = area;
+              areaSelect.appendChild(option);
+            });
+          });
+      }
+    });
+
+    document.getElementById('fetchButton').addEventListener('click', function() {
+      currentCity = document.getElementById('citySelect').value;
+      currentArea = document.getElementById('areaSelect').value;
+      
+      if (currentCity) {
+        currentPage = 1;
+        fetchHostelData(currentCity, currentArea, currentPage);
+      } else {
+        alert('Please select a city.');
+      }
+    });
+
+    function fetchHostelData(city, area, page) {
+      let url = `${apiUrl}?city=${city}&page=${page}`;
+      if (area) url += `&area=${area}`;
+
+      fetch(url)
         .then(response => response.json())
         .then(data => {
           const boxesContainer = document.getElementById('hostelBoxes');
           boxesContainer.innerHTML = '';
 
           if (data.data.length === 0) {
-            boxesContainer.innerHTML = '<p>No hostels found for this city.</p>';
-            document.getElementById('pagination').innerHTML = ''; // Clear pagination
+            boxesContainer.innerHTML = '<p>No hostels found for this city and area.</p>';
+            document.getElementById('pagination').innerHTML = '';
             return;
           }
 
           data.data.forEach((row, index) => {
-            const phoneNumberFormatted = row.phoneNumber.replace(/\D/g, ''); // Format the phone number for WhatsApp
+            const phoneNumberFormatted = row.phoneNumber.replace(/\D/g, '');
             const box = document.createElement('div');
             box.classList.add('box');
             box.innerHTML = `
@@ -245,7 +281,6 @@
         });
     }
 
-    // Setup pagination links
     function setupPagination(totalRows, currentPage) {
       const paginationDiv = document.getElementById('pagination');
       paginationDiv.innerHTML = '';
@@ -260,22 +295,11 @@
         }
         pageLink.addEventListener('click', () => {
           currentPage = i;
-          fetchHostelData(currentCity, currentPage);
+          fetchHostelData(currentCity, currentArea, currentPage);
         });
         paginationDiv.appendChild(pageLink);
       }
     }
-
-    // Fetch data when the "Fetch Data" button is clicked
-    document.getElementById('fetchButton').addEventListener('click', function() {
-      currentCity = document.getElementById('citySelect').value;
-      if (currentCity) {
-        currentPage = 1; // Reset to first page when city is changed
-        fetchHostelData(currentCity, currentPage);
-      } else {
-        alert('Please select a city.');
-      }
-    });
   </script>
 
 </body>
