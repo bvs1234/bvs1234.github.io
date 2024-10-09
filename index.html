@@ -83,7 +83,7 @@
       font-size: 16px;
     }
 
-    .call-button {
+    .call-button, .whatsapp-button {
       background-color: #007bff;
       color: white;
       padding: 10px 15px;
@@ -94,8 +94,16 @@
       display: inline-block;
     }
 
+    .whatsapp-button {
+      background-color: #25D366; /* WhatsApp green color */
+    }
+
     .call-button:hover {
       background-color: #0056b3;
+    }
+
+    .whatsapp-button:hover {
+      background-color: #1ebe5b;
     }
 
     .boxes-container {
@@ -216,6 +224,7 @@
           }
 
           data.data.forEach((row, index) => {
+            const phoneNumberFormatted = row.phoneNumber.replace(/\D/g, ''); // Format the phone number for WhatsApp
             const box = document.createElement('div');
             box.classList.add('box');
             box.innerHTML = `
@@ -225,6 +234,7 @@
               <p><strong>Area:</strong> ${row.area}</p>
               <p><strong>City:</strong> ${row.cityName}</p>
               <a href="tel:${row.phoneNumber}" class="call-button">Call Now</a>
+              <a href="https://wa.me/${phoneNumberFormatted}" class="whatsapp-button">WhatsApp</a>
             `;
             boxesContainer.appendChild(box);
           });
