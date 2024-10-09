@@ -30,8 +30,8 @@
       margin-right: 10px;
     }
 
-    #citySelect, #areaSelect {
-      width: 200px;
+    select {
+      width: 300px;
       height: 40px;
       font-size: 18px;
       border-radius: 5px;
@@ -132,6 +132,7 @@
       background-color: #0056b3;
     }
 
+    /* Media query for mobile screens */
     @media (max-width: 768px) {
       body {
         padding: 10px;
@@ -147,7 +148,7 @@
         font-size: 20px;
       }
 
-      #citySelect, #areaSelect, #fetchButton {
+      select, #fetchButton {
         width: 100%;
         font-size: 16px;
         margin: 0 0 10px 0;
@@ -181,16 +182,17 @@
     <select id="citySelect">
       <option value="">--Select a City--</option>
     </select>
-    
+
     <label for="areaSelect">Select Area:</label>
     <select id="areaSelect">
       <option value="">--Select an Area--</option>
     </select>
-    
+
     <button id="fetchButton">Fetch Data</button>
   </div>
 
   <div class="boxes-container" id="hostelBoxes"></div>
+
   <div id="pagination"></div>
 
   <script>
@@ -200,6 +202,7 @@
     let currentPage = 1;
     const rowsPerPage = 100;
 
+    // Fetch list of cities on page load
     fetch(`${apiUrl}?getCities=true`)
       .then(response => response.json())
       .then(data => {
@@ -212,15 +215,17 @@
         });
       });
 
-    document.getElementById('citySelect').addEventListener('change', function() {
-      const selectedCity = this.value;
-      currentCity = selectedCity;
-      if (selectedCity) {
-        fetch(`${apiUrl}?city=${selectedCity}&getAreas=true`)
+    // Fetch list of areas when a city is selected
+    document.getElementById('citySelect').addEventListener('change', function () {
+      currentCity = this.value;
+      currentArea = ''; // Reset area when city is changed
+      document.getElementById('areaSelect').innerHTML = '<option value="">--Select an Area--</option>';
+      
+      if (currentCity) {
+        fetch(`${apiUrl}?city=${currentCity}&getAreas=true`)
           .then(response => response.json())
           .then(data => {
             const areaSelect = document.getElementById('areaSelect');
-            areaSelect.innerHTML = '<option value="">--Select an Area--</option>';
             data.areas.forEach(area => {
               const option = document.createElement('option');
               option.value = area;
@@ -231,18 +236,7 @@
       }
     });
 
-    document.getElementById('fetchButton').addEventListener('click', function() {
-      currentCity = document.getElementById('citySelect').value;
-      currentArea = document.getElementById('areaSelect').value;
-      
-      if (currentCity) {
-        currentPage = 1;
-        fetchHostelData(currentCity, currentArea, currentPage);
-      } else {
-        alert('Please select a city.');
-      }
-    });
-
+    // Fetch and display hostel data based on city, area, and pagination
     function fetchHostelData(city, area, page) {
       let url = `${apiUrl}?city=${city}&page=${page}`;
       if (area) url += `&area=${area}`;
@@ -254,8 +248,8 @@
           boxesContainer.innerHTML = '';
 
           if (data.data.length === 0) {
-            boxesContainer.innerHTML = '<p>No hostels found for this city and area.</p>';
-            document.getElementById('pagination').innerHTML = '';
+            boxesContainer.innerHTML = '<p>No hostels found for this area.</p>';
+            document.getElementById('pagination').innerHTML = ''; // Clear pagination
             return;
           }
 
@@ -281,6 +275,7 @@
         });
     }
 
+    // Setup pagination links
     function setupPagination(totalRows, currentPage) {
       const paginationDiv = document.getElementById('pagination');
       paginationDiv.innerHTML = '';
@@ -297,10 +292,111 @@
           currentPage = i;
           fetchHostelData(currentCity, currentArea, currentPage);
         });
-        paginationDiv.appendChild(pageLink);
-      }
-    }
-  </script>
+        paginationHere’s the corrected JavaScript logic to ensure the area options are displayed when a city is selected:
 
-</body>
-</html>
+### Key Fixes:
+- **`getAreas=true` query parameter added** to fetch areas dynamically based on the selected city.
+- Clear area selection each time a new city is selected.
+
+```html
+<script>
+  const apiUrl = 'https://script.google.com/macros/s/AKfycbwdpB_uLxzvOZJAO6U3Uof8pFJBqjVFhFZUchhgZcvUNjm2egDaXZgzPb-8UIRNRl54IA/exec';
+  let currentCity = '';
+  let currentArea = '';
+  let currentPage = 1;
+  const rowsPerPage = 100;
+
+  // Fetch list of cities on page load
+  fetch(`${apiUrl}?getCities=true`)
+    .then(response => response.json())
+    .then(data => {
+      const citySelect = document.getElementById('citySelect');
+      data.cities.forEach(city => {
+        const option = document.createElement('option');
+        option.value = city;
+        option.textContent = city;
+        citySelect.appendChild(option);
+      });
+    });
+
+  // Fetch list of areas when a city is selected
+  document.getElementById('citySelect').addEventListener('change', function () {
+    currentCity = this.value;
+    currentArea = ''; // Reset area when city is changed
+    document.getElementById('areaSelect').innerHTML = '<option value="">--Select an Area--</option>';
+    
+    if (currentCity) {
+      fetch(`${apiUrl}?city=${currentCity}&getAreas=true`)
+        .then(response => response.json())
+        .then(data => {
+          const areaSelect = document.getElementById('areaSelect');
+          data.areas.forEach(area => {
+            const option = document.createElement('option');
+            option.value = area;
+            option.textContent = area;
+            areaSelect.appendChild(option);
+          });
+        });
+    }
+  });
+
+  // Fetch and display hostel data based on city, area, and pagination
+  function fetchHostelData(city, area, page) {
+    let url = `${apiUrl}?city=${city}&page=${page}`;
+    if (area) url += `&area=${area}`;
+
+    fetch(url)
+      .then(response => response.json())
+      .then(data => {
+        const boxesContainer = document.getElementById('hostelBoxes');
+        boxesContainer.innerHTML = '';
+
+        if (data.data.length === 0) {
+          boxesContainer.innerHTML = '<p>No hostels found for this area.</p>';
+          document.getElementById('pagination').innerHTML = ''; // Clear pagination
+          return;
+        }
+
+        data.data.forEach((row, index) => {
+          const phoneNumberFormatted = row.phoneNumber.replace(/\D/g, '');
+          const box = document.createElement('div');
+          box.classList.add('box');
+          box.innerHTML = `
+            <p><strong>S.No:</strong> ${(page - 1) * rowsPerPage + index + 1}</p>
+            <p><strong>Hostel Name:</strong> ${row.hostelName}</p>
+            <p><strong>Area:</strong> ${row.area}</p>
+            <p><strong>City:</strong> ${row.cityName}</p>
+            <a href="tel:${row.phoneNumber}" class="call-button">Call Now</a>
+            <a href="https://wa.me/${phoneNumberFormatted}" class="whatsapp-button">WhatsApp</a>
+          `;
+          boxesContainer.appendChild(box);
+        });
+
+        setupPagination(data.total, page);
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+      });
+  }
+
+  // Setup pagination links
+  function setupPagination(totalRows, currentPage) {
+    const paginationDiv = document.getElementById('pagination');
+    paginationDiv.innerHTML = '';
+    const totalPages = Math.ceil(totalRows / rowsPerPage);
+
+    for (let i = 1; i <= totalPages; i++) {
+      const pageLink = document.createElement('span');
+      pageLink.textContent = i;
+      pageLink.classList.add('page-link');
+      if (i === currentPage) {
+        pageLink.style.backgroundColor = '#0056b3';
+      }
+      pageLink.addEventListener('click', () => {
+        currentPage = i;
+        fetchHostelData(currentCity, currentArea, currentPage);
+      });
+      paginationDiv.appendChild(pageLink);
+    }
+  }
+</script>
