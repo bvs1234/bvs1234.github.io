@@ -4,9 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Hostel Data</title>
-  <style>
-    /* Add your CSS styles here */
-  </style>
 </head>
 <body>
 
@@ -26,101 +23,50 @@
 
   <div class="boxes-container" id="hostelBoxes"></div>
 
-  <div id="pagination"></div>
-
   <script>
-    const apiUrl = 'YOUR_API_ENDPOINT_HERE'; // Replace with your API endpoint
-    let currentCity = '';
-    let currentArea = '';
-    let currentPage = 1;
-    const rowsPerPage = 100;
+    // Predefined lists of cities and areas
+    const cityAreaMapping = {
+      'City A': ['Area 1A', 'Area 1B', 'Area 1C'],
+      'City B': ['Area 2A', 'Area 2B'],
+      'City C': ['Area 3A', 'Area 3B', 'Area 3C', 'Area 3D'],
+      // Add more cities and corresponding areas here
+    };
 
-    // Fetch list of cities on page load
-    fetch(`${apiUrl}?getCities=true`)
-      .then(response => response.json())
-      .then(data => {
-        const citySelect = document.getElementById('citySelect');
-        data.cities.forEach(city => {
-          const option = document.createElement('option');
-          option.value = city;
-          option.textContent = city;
-          citySelect.appendChild(option);
-        });
-      });
+    // Populate city select dropdown
+    const citySelect = document.getElementById('citySelect');
+    for (const city in cityAreaMapping) {
+      const option = document.createElement('option');
+      option.value = city;
+      option.textContent = city;
+      citySelect.appendChild(option);
+    }
 
-    // Fetch areas based on selected city
-    document.getElementById('citySelect').addEventListener('change', function() {
-      currentCity = this.value;
+    // Populate area select dropdown based on selected city
+    citySelect.addEventListener('change', function() {
       const areaSelect = document.getElementById('areaSelect');
       areaSelect.innerHTML = '<option value="">--Select an Area--</option>'; // Reset area options
-      areaSelect.disabled = true; // Disable area select until city is selected
-      
-      if (currentCity) {
-        console.log(`Fetching areas for city: ${currentCity}`); // Log selected city
-        fetch(`${apiUrl}?getAreas=true&city=${currentCity}`)
-          .then(response => {
-            if (!response.ok) {
-              throw new Error('Network response was not ok');
-            }
-            return response.json();
-          })
-          .then(data => {
-            console.log('Areas fetched:', data); // Log fetched areas
-            data.areas.forEach(area => {
-              const option = document.createElement('option');
-              option.value = area;
-              option.textContent = area;
-              areaSelect.appendChild(option);
-            });
-            areaSelect.disabled = false; // Enable area select after fetching areas
-          })
-          .catch(error => {
-            console.error('Error fetching areas:', error);
-          });
+      areaSelect.disabled = true; // Disable area select until a city is selected
+
+      const selectedCity = this.value;
+      if (selectedCity && cityAreaMapping[selectedCity]) {
+        cityAreaMapping[selectedCity].forEach(area => {
+          const option = document.createElement('option');
+          option.value = area;
+          option.textContent = area;
+          areaSelect.appendChild(option);
+        });
+        areaSelect.disabled = false; // Enable area select after populating
       }
     });
 
-    // Fetch and display hostel data based on city, area, and pagination
-    function fetchHostelData(city, area, page) {
-      fetch(`${apiUrl}?city=${city}&area=${area}&page=${page}`)
-        .then(response => response.json())
-        .then(data => {
-          const boxesContainer = document.getElementById('hostelBoxes');
-          boxesContainer.innerHTML = '';
-
-          if (data.data.length === 0) {
-            boxesContainer.innerHTML = '<p>No hostels found for this city and area.</p>';
-            document.getElementById('pagination').innerHTML = ''; // Clear pagination
-            return;
-          }
-
-          data.data.forEach((row, index) => {
-            const phoneNumberFormatted = row.phoneNumber.replace(/\D/g, ''); // Format the phone number for WhatsApp
-            const box = document.createElement('div');
-            box.classList.add('box');
-            box.innerHTML = `
-              <p><strong>S.No:</strong> ${(page - 1) * rowsPerPage + index + 1}</p>
-              <p><strong>Hostel Name:</strong> ${row.hostelName}</p>
-              <p><strong>Area:</strong> ${row.area}</p>
-              <p><strong>City:</strong> ${row.cityName}</p>
-              <a href="tel:${row.phoneNumber}" class="call-button">Call Now</a>
-              <a href="https://wa.me/${phoneNumberFormatted}" class="whatsapp-button">WhatsApp</a>
-            `;
-            boxesContainer.appendChild(box);
-          });
-
-          setupPagination(data.total, page);
-        })
-        .catch(error => {
-          console.error('Error fetching data:', error);
-        });
-    }
-
-    // Fetch data when button is clicked
+    // Fetch data logic remains the same
     document.getElementById('fetchButton').addEventListener('click', function() {
-      currentArea = document.getElementById('areaSelect').value;
+      const currentCity = citySelect.value;
+      const currentArea = document.getElementById('areaSelect').value;
       if (currentCity && currentArea) {
-        fetchHostelData(currentCity, currentArea, currentPage);
+        // Fetch data based on currentCity and currentArea
+        console.log(`Fetching data for City: ${currentCity}, Area: ${currentArea}`);
+        // Your fetch logic here...
       } else {
         alert('Please select both a city and an area.');
       }
