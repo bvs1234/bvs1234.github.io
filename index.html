@@ -1,152 +1,309 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hostel Data</title>
-    <style>
-        /* Add your CSS styles here */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        .box { 
-            border: 1px solid #ccc; 
-            padding: 10px; 
-            margin: 10px; 
-            border-radius: 5px; 
-            background-color: #f9f9f9; 
-        }
-        .call-button, .whatsapp-button { 
-            margin: 5px; 
-            padding: 5px 10px; 
-            border: none; 
-            border-radius: 5px; 
-            background-color: #007bff; 
-            color: white; 
-            text-decoration: none; 
-        }
-        .call-button:hover, .whatsapp-button:hover { 
-            background-color: #0056b3; 
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hostel Data</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background-color: #f9f9f9;
+      margin: 0;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    .container {
+      display: flex;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    label {
+      font-size: 24px;
+      font-weight: bold;
+      margin-right: 10px;
+    }
+
+    #citySelect, #areaSelect {
+      width: 300px;
+      height: 40px;
+      font-size: 18px;
+      border-radius: 5px;
+      border: 2px solid #28a745;
+      margin-right: 10px;
+    }
+
+    #fetchButton {
+      padding: 10px 20px;
+      font-size: 18px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    #fetchButton:hover {
+      background-color: #218838;
+    }
+
+    .box {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      border: 2px solid #ddd;
+      border-radius: 10px;
+      padding: 20px;
+      margin: 10px;
+      width: 250px;
+      background-color: white;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+      position: relative;
+    }
+
+    .box::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 10px;
+      background: linear-gradient(to bottom, blue, green);
+      border-radius: 10px 0 0 10px;
+    }
+
+    .box p {
+      margin: 5px 0;
+      font-size: 16px;
+    }
+
+    .call-button, .whatsapp-button {
+      background-color: #007bff;
+      color: white;
+      padding: 10px 15px;
+      text-align: center;
+      border-radius: 5px;
+      text-decoration: none;
+      margin-top: 10px;
+      display: inline-block;
+    }
+
+    .whatsapp-button {
+      background-color: #25D366; /* WhatsApp green color */
+    }
+
+    .call-button:hover {
+      background-color: #0056b3;
+    }
+
+    .whatsapp-button:hover {
+      background-color: #1ebe5b;
+    }
+
+    .boxes-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    #pagination {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .page-link {
+      padding: 10px;
+      margin: 0 5px;
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    .page-link:hover {
+      background-color: #0056b3;
+    }
+
+    /* Media query for mobile screens */
+    @media (max-width: 768px) {
+      body {
+        padding: 10px;
+      }
+
+      .container {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      label {
+        margin-bottom: 10px;
+        font-size: 20px;
+      }
+
+      #citySelect, #areaSelect, #fetchButton {
+        width: 100%;
+        font-size: 16px;
+        margin: 0 0 10px 0;
+      }
+
+      .boxes-container {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .box {
+        width: 100%;
+        max-width: 300px;
+      }
+
+      #pagination {
+        flex-wrap: wrap;
+      }
+
+      .page-link {
+        padding: 8px;
+        font-size: 14px;
+      }
+    }
+  </style>
 </head>
 <body>
-    <h1>Hostel Data</h1>
 
+  <div class="container">
     <label for="citySelect">Select City:</label>
-    <select id="citySelect" onchange="fetchAreas()">
-        <option value="">--Select a City--</option>
-        <!-- City options will be populated here -->
+    <select id="citySelect">
+      <option value="">--Select a City--</option>
     </select>
 
     <label for="areaSelect">Select Area:</label>
-    <select id="areaSelect">
-        <option value="">--Select an Area--</option>
-        <!-- Area options will be populated here -->
+    <select id="areaSelect" disabled>
+      <option value="">--Select an Area--</option>
     </select>
 
-    <button onclick="fetchHostelData()">Fetch Data</button>
+    <button id="fetchButton">Fetch Data</button>
+  </div>
 
-    <div id="hostelBoxes"></div>
-    <div id="pagination"></div>
+  <div class="boxes-container" id="hostelBoxes"></div>
 
-    <script>
-        const apiUrl = 'YOUR_API_ENDPOINT_HERE'; // Replace with your API endpoint
-        const rowsPerPage = 100;  // Set your rows per page here
+  <div id="pagination"></div>
 
-        // Function to fetch cities
-        function fetchCities() {
-            fetch(`${apiUrl}?getCities=true`)
-                .then(response => response.json())
-                .then(data => {
-                    const citySelect = document.getElementById('citySelect');
-                    data.cities.forEach(city => {
-                        const option = document.createElement('option');
-                        option.value = city;
-                        option.textContent = city;
-                        citySelect.appendChild(option);
-                    });
-                })
-                .catch(error => console.error('Error fetching cities:', error));
+  <script>
+    // Updated App Script URL
+    const apiUrl = 'https://script.google.com/macros/s/AKfycbwdpB_uLxzvOZJAO6U3Uof8pFJBqjVFhFZUchhgZcvUNjm2egDaXZgzPb-8UIRNRl54IA/exec';
+    let currentCity = '';
+    let currentArea = '';
+    let currentPage = 1;
+    const rowsPerPage = 100;
+
+    // Fetch list of cities on page load
+    fetch(`${apiUrl}?getCities=true`)
+      .then(response => response.json())
+      .then(data => {
+        const citySelect = document.getElementById('citySelect');
+        data.cities.forEach(city => {
+          const option = document.createElement('option');
+          option.value = city;
+          option.textContent = city;
+          citySelect.appendChild(option);
+        });
+      });
+
+    // Fetch areas based on selected city
+    document.getElementById('citySelect').addEventListener('change', function() {
+      currentCity = this.value;
+      const areaSelect = document.getElementById('areaSelect');
+      areaSelect.innerHTML = '<option value="">--Select an Area--</option>'; // Reset area options
+      areaSelect.disabled = true; // Disable area select until city is selected
+      
+      if (currentCity) {
+        fetch(`${apiUrl}?getAreas=true&city=${currentCity}`)
+          .then(response => response.json())
+          .then(data => {
+            data.areas.forEach(area => {
+              const option = document.createElement('option');
+              option.value = area;
+              option.textContent = area;
+              areaSelect.appendChild(option);
+            });
+            areaSelect.disabled = false; // Enable area select after fetching areas
+          });
+      }
+    });
+
+    // Fetch and display hostel data based on city, area, and pagination
+    function fetchHostelData(city, area, page) {
+      fetch(`${apiUrl}?city=${city}&area=${area}&page=${page}`)
+        .then(response => response.json())
+        .then(data => {
+          const boxesContainer = document.getElementById('hostelBoxes');
+          boxesContainer.innerHTML = '';
+
+          if (data.data.length === 0) {
+            boxesContainer.innerHTML = '<p>No hostels found for this city and area.</p>';
+            document.getElementById('pagination').innerHTML = ''; // Clear pagination
+            return;
+          }
+
+          data.data.forEach((row, index) => {
+            const phoneNumberFormatted = row.phoneNumber.replace(/\D/g, ''); // Format the phone number for WhatsApp
+            const box = document.createElement('div');
+            box.classList.add('box');
+            box.innerHTML = `
+              <p><strong>S.No:</strong> ${(page - 1) * rowsPerPage + index + 1}</p>
+              <p><strong>Hostel Name:</strong> ${row.hostelName}</p>
+              <p><strong>Area:</strong> ${row.area}</p>
+              <p><strong>City:</strong> ${row.cityName}</p>
+              <a href="tel:${row.phoneNumber}" class="call-button">Call Now</a>
+              <a href="https://wa.me/${phoneNumberFormatted}" class="whatsapp-button">WhatsApp</a>
+            `;
+            boxesContainer.appendChild(box);
+          });
+
+          setupPagination(data.total, page);
+        })
+        .catch(error => {
+          console.error('Error fetching data:', error);
+        });
+    }
+
+    // Setup pagination links
+    function setupPagination(totalRows, currentPage) {
+      const paginationDiv = document.getElementById('pagination');
+      paginationDiv.innerHTML = '';
+      const totalPages = Math.ceil(totalRows / rowsPerPage);
+
+      for (let i = 1; i <= totalPages; i++) {
+        const pageLink = document.createElement('span');
+        pageLink.textContent = i;
+        pageLink.classList.add('page-link');
+        if (i === currentPage) {
+          pageLink.style.backgroundColor = '#0056b3';
         }
+        pageLink.addEventListener('click', () => {
+          currentPage = i;
+          fetchHostelData(currentCity, currentArea, currentPage);
+        });
+        paginationDiv.appendChild(pageLink);
+      }
+    }
 
-        // Function to fetch areas based on selected city
-        function fetchAreas() {
-            const city = document.getElementById('citySelect').value;
-            if (city) {
-                fetch(`${apiUrl}?getAreas=true&city=${city}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        const areaSelect = document.getElementById('areaSelect');
-                        areaSelect.innerHTML = '<option value="">--Select an Area--</option>'; // Clear previous options
-                        data.areas.forEach(area => {
-                            const option = document.createElement('option');
-                            option.value = area;
-                            option.textContent = area;
-                            areaSelect.appendChild(option);
-                        });
-                    })
-                    .catch(error => console.error('Error fetching areas:', error));
-            } else {
-                document.getElementById('areaSelect').innerHTML = '<option value="">--Select an Area--</option>'; // Reset areas
-            }
-        }
-
-        // Fetch hostel data based on selected city and area
-        function fetchHostelData() {
-            const city = document.getElementById('citySelect').value;
-            const area = document.getElementById('areaSelect').value;
-            const page = 1; // Default to the first page
-
-            fetch(`${apiUrl}?city=${city}&area=${area}&page=${page}`)
-                .then(response => response.json())
-                .then(data => {
-                    const boxesContainer = document.getElementById('hostelBoxes');
-                    boxesContainer.innerHTML = '';
-
-                    if (data.data.length === 0) {
-                        boxesContainer.innerHTML = '<p>No hostels found for this city and area.</p>';
-                        document.getElementById('pagination').innerHTML = ''; // Clear pagination
-                        return;
-                    }
-
-                    data.data.forEach((row, index) => {
-                        const box = document.createElement('div');
-                        box.classList.add('box');
-                        box.innerHTML = `
-                            <p><strong>S.No:</strong> ${(page - 1) * rowsPerPage + index + 1}</p>
-                            <p><strong>Hostel Name:</strong> ${row.hostelName}</p>
-                            <p><strong>Area:</strong> ${row.area}</p>
-                            <p><strong>City:</strong> ${row.cityName}</p>
-                            <a href="tel:${row.phoneNumber}" class="call-button">Call Now</a>
-                            <a href="https://wa.me/${row.phoneNumber.replace(/\D/g, '')}" class="whatsapp-button">WhatsApp</a>
-                        `;
-                        boxesContainer.appendChild(box);
-                    });
-
-                    setupPagination(data.total, page); // Function to set up pagination
-                })
-                .catch(error => console.error('Error fetching hostel data:', error));
-        }
-
-        // Pagination setup
-        function setupPagination(total, currentPage) {
-            const totalPages = Math.ceil(total / rowsPerPage);
-            const paginationContainer = document.getElementById('pagination');
-            paginationContainer.innerHTML = ''; // Clear existing pagination
-
-            for (let i = 1; i <= totalPages; i++) {
-                const button = document.createElement('button');
-                button.innerText = i;
-                button.disabled = (i === currentPage);
-                button.onclick = () => fetchHostelData(i);
-                paginationContainer.appendChild(button);
-            }
-        }
-
-        // Call fetchCities when the page loads
-        window.onload = fetchCities;
-    </script>
+    // Fetch data when button is clicked
+    document.getElementById('fetchButton').addEventListener('click', function() {
+      currentArea = document.getElementById('areaSelect').value;
+      if (currentCity && currentArea) {
+        fetchHostelData(currentCity, currentArea, currentPage);
+      } else {
+        alert('Please select both a city and an area.');
+      }
+    });
+  </script>
 </body>
 </html>
