@@ -5,174 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Hostel Data</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      background-color: #f9f9f9;
-      margin: 0;
-      padding: 20px;
-      box-sizing: border-box;
-    }
-
-    .container {
-      display: flex;
-      align-items: center;
-      margin-bottom: 30px;
-    }
-
-    label {
-      font-size: 24px;
-      font-weight: bold;
-      margin-right: 10px;
-    }
-
-    #citySelect, #areaSelect {
-      width: 300px;
-      height: 40px;
-      font-size: 18px;
-      border-radius: 5px;
-      border: 2px solid #28a745;
-      margin-right: 10px;
-    }
-
-    #fetchButton {
-      padding: 10px 20px;
-      font-size: 18px;
-      background-color: #28a745;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    #fetchButton:hover {
-      background-color: #218838;
-    }
-
-    .box {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-around;
-      border: 2px solid #ddd;
-      border-radius: 10px;
-      padding: 20px;
-      margin: 10px;
-      width: 250px;
-      background-color: white;
-      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-      position: relative;
-    }
-
-    .box::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      height: 100%;
-      width: 10px;
-      background: linear-gradient(to bottom, blue, green);
-      border-radius: 10px 0 0 10px;
-    }
-
-    .box p {
-      margin: 5px 0;
-      font-size: 16px;
-    }
-
-    .call-button, .whatsapp-button {
-      background-color: #007bff;
-      color: white;
-      padding: 10px 15px;
-      text-align: center;
-      border-radius: 5px;
-      text-decoration: none;
-      margin-top: 10px;
-      display: inline-block;
-    }
-
-    .whatsapp-button {
-      background-color: #25D366; /* WhatsApp green color */
-    }
-
-    .call-button:hover {
-      background-color: #0056b3;
-    }
-
-    .whatsapp-button:hover {
-      background-color: #1ebe5b;
-    }
-
-    .boxes-container {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 20px;
-    }
-
-    #pagination {
-      display: flex;
-      justify-content: center;
-      margin-top: 20px;
-    }
-
-    .page-link {
-      padding: 10px;
-      margin: 0 5px;
-      background-color: #007bff;
-      color: white;
-      cursor: pointer;
-      border-radius: 5px;
-    }
-
-    .page-link:hover {
-      background-color: #0056b3;
-    }
-
-    /* Media query for mobile screens */
-    @media (max-width: 768px) {
-      body {
-        padding: 10px;
-      }
-
-      .container {
-        flex-direction: column;
-        align-items: stretch;
-      }
-
-      label {
-        margin-bottom: 10px;
-        font-size: 20px;
-      }
-
-      #citySelect, #areaSelect, #fetchButton {
-        width: 100%;
-        font-size: 16px;
-        margin: 0 0 10px 0;
-      }
-
-      .boxes-container {
-        flex-direction: column;
-        align-items: center;
-      }
-
-      .box {
-        width: 100%;
-        max-width: 300px;
-      }
-
-      #pagination {
-        flex-wrap: wrap;
-      }
-
-      .page-link {
-        padding: 8px;
-        font-size: 14px;
-      }
-    }
+    /* Add your CSS styles here */
   </style>
 </head>
 <body>
@@ -196,8 +29,7 @@
   <div id="pagination"></div>
 
   <script>
-    // Updated App Script URL
-    const apiUrl = 'https://script.google.com/macros/s/AKfycbwdpB_uLxzvOZJAO6U3Uof8pFJBqjVFhFZUchhgZcvUNjm2egDaXZgzPb-8UIRNRl54IA/exec';
+    const apiUrl = 'YOUR_API_ENDPOINT_HERE'; // Replace with your API endpoint
     let currentCity = '';
     let currentArea = '';
     let currentPage = 1;
@@ -224,9 +56,16 @@
       areaSelect.disabled = true; // Disable area select until city is selected
       
       if (currentCity) {
+        console.log(`Fetching areas for city: ${currentCity}`); // Log selected city
         fetch(`${apiUrl}?getAreas=true&city=${currentCity}`)
-          .then(response => response.json())
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+            return response.json();
+          })
           .then(data => {
+            console.log('Areas fetched:', data); // Log fetched areas
             data.areas.forEach(area => {
               const option = document.createElement('option');
               option.value = area;
@@ -234,6 +73,9 @@
               areaSelect.appendChild(option);
             });
             areaSelect.disabled = false; // Enable area select after fetching areas
+          })
+          .catch(error => {
+            console.error('Error fetching areas:', error);
           });
       }
     });
@@ -272,27 +114,6 @@
         .catch(error => {
           console.error('Error fetching data:', error);
         });
-    }
-
-    // Setup pagination links
-    function setupPagination(totalRows, currentPage) {
-      const paginationDiv = document.getElementById('pagination');
-      paginationDiv.innerHTML = '';
-      const totalPages = Math.ceil(totalRows / rowsPerPage);
-
-      for (let i = 1; i <= totalPages; i++) {
-        const pageLink = document.createElement('span');
-        pageLink.textContent = i;
-        pageLink.classList.add('page-link');
-        if (i === currentPage) {
-          pageLink.style.backgroundColor = '#0056b3';
-        }
-        pageLink.addEventListener('click', () => {
-          currentPage = i;
-          fetchHostelData(currentCity, currentArea, currentPage);
-        });
-        paginationDiv.appendChild(pageLink);
-      }
     }
 
     // Fetch data when button is clicked
