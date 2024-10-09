@@ -22,21 +22,22 @@
       display: flex;
       align-items: center;
       margin-bottom: 30px;
+      flex-direction: column; /* Stack city and area select vertically */
     }
 
     label {
       font-size: 24px;
       font-weight: bold;
-      margin-right: 10px;
+      margin: 5px 0; /* Add margin for better spacing */
     }
 
-    #citySelect {
+    #citySelect, #areaSelect {
       width: 300px;
       height: 40px;
       font-size: 18px;
       border-radius: 5px;
       border: 2px solid #28a745;
-      margin-right: 10px;
+      margin: 5px 0; /* Add margin for better spacing */
     }
 
     #fetchButton {
@@ -148,7 +149,7 @@
         font-size: 20px;
       }
 
-      #citySelect, #fetchButton {
+      #citySelect, #areaSelect, #fetchButton {
         width: 100%;
         font-size: 16px;
         margin: 0 0 10px 0;
@@ -182,7 +183,13 @@
     <select id="citySelect">
       <option value="">--Select a City--</option>
     </select>
-    <button id="fetchButton">Fetch Data</button>
+    
+    <label for="areaSelect">Select Area:</label>
+    <select id="areaSelect" disabled>
+      <option value="">--Select an Area--</option>
+    </select>
+
+    <button id="fetchButton" disabled>Fetch Data</button>
   </div>
 
   <div class="boxes-container" id="hostelBoxes"></div>
@@ -190,9 +197,9 @@
   <div id="pagination"></div>
 
   <script>
-    // Updated App Script URL
     const apiUrl = 'https://script.google.com/macros/s/AKfycbwVQXBmiZpTc_bzyn6HwgepoPtplgbBPdCoQGWANIxoAfWyuoNVAPLLL8-7V1SUi79M1w/exec';
     let currentCity = '';
+    let currentArea = '';
     let currentPage = 1;
     const rowsPerPage = 100;
 
@@ -209,16 +216,52 @@
         });
       });
 
-    // Fetch and display hostel data based on city and pagination
-    function fetchHostelData(city, page) {
-      fetch(`${apiUrl}?city=${city}&page=${page}`)
+    // Fetch areas when a city is selected
+    document.getElementById('citySelect').addEventListener('change', function() {
+      currentCity = this.value;
+      const areaSelect = document.getElementById('areaSelect');
+      areaSelect.innerHTML = '<option value="">--Select an Area--</option>'; // Reset area options
+      areaSelect.disabled = true; // Disable area select until data is fetched
+
+      if (currentCity) {
+        fetch(`${apiUrl}?getAreas=true&city=${currentCity}`)
+          .then(response => response.json())
+          .then(data => {
+            data.areas.forEach(area => {
+              const option = document.createElement('option');
+              option.value = area;
+              option.textContent = area;
+              areaSelect.appendChild(option);
+            });
+            areaSelect.disabled = false; // Enable area select after options are populated
+          })
+          .catch(error => {
+            console.error('Error fetching areas:', error);
+          });
+      }
+    });
+
+    // Fetch data when the "Fetch Data" button is clicked
+    document.getElementById('fetchButton').addEventListener('click', function() {
+      currentArea = document.getElementById('areaSelect').value;
+      if (currentCity && currentArea) {
+        currentPage = 1; // Reset to first page when city and area are selected
+        fetchHostelData(currentCity, currentArea, currentPage);
+      } else {
+        alert('Please select both city and area.');
+      }
+    });
+
+    // Fetch hostel data based on city, area, and pagination
+    function fetchHostelData(city, area, page) {
+      fetch(`${apiUrl}?city=${city}&area=${area}&page=${page}`)
         .then(response => response.json())
         .then(data => {
           const boxesContainer = document.getElementById('hostelBoxes');
           boxesContainer.innerHTML = '';
 
           if (data.data.length === 0) {
-            boxesContainer.innerHTML = '<p>No hostels found for this city.</p>';
+            boxesContainer.innerHTML = '<p>No hostels found for this city and area.</p>';
             document.getElementById('pagination').innerHTML = ''; // Clear pagination
             return;
           }
@@ -241,41 +284,27 @@
           setupPagination(data.total, page);
         })
         .catch(error => {
-          console.error('Error fetching data:', error);
+          console.error('Error fetching hostel data:', error);
         });
     }
 
-    // Setup pagination links
-    function setupPagination(totalRows, currentPage) {
-      const paginationDiv = document.getElementById('pagination');
-      paginationDiv.innerHTML = '';
-      const totalPages = Math.ceil(totalRows / rowsPerPage);
+    // Setup pagination
+    function setupPagination(total, currentPage) {
+      const paginationContainer = document.getElementById('pagination');
+      paginationContainer.innerHTML = '';
+
+      const totalPages = Math.ceil(total / rowsPerPage);
 
       for (let i = 1; i <= totalPages; i++) {
-        const pageLink = document.createElement('span');
-        pageLink.textContent = i;
+        const pageLink = document.createElement('div');
         pageLink.classList.add('page-link');
-        if (i === currentPage) {
-          pageLink.style.backgroundColor = '#0056b3';
-        }
-        pageLink.addEventListener('click', () => {
-          currentPage = i;
-          fetchHostelData(currentCity, currentPage);
+        pageLink.textContent = i;
+        pageLink.addEventListener('click', function() {
+          fetchHostelData(currentCity, currentArea, i);
         });
-        paginationDiv.appendChild(pageLink);
+        paginationContainer.appendChild(pageLink);
       }
     }
-
-    // Fetch data when the "Fetch Data" button is clicked
-    document.getElementById('fetchButton').addEventListener('click', function() {
-      currentCity = document.getElementById('citySelect').value;
-      if (currentCity) {
-        currentPage = 1; // Reset to first page when city is changed
-        fetchHostelData(currentCity, currentPage);
-      } else {
-        alert('Please select a city.');
-      }
-    });
   </script>
 
 </body>
