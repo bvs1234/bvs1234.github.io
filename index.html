@@ -17,7 +17,14 @@
     padding: 20px;
     box-sizing: border-box;
   }
-
+    .not-profit {
+      font-size: 48px; /* Larger font size */
+      font-weight: bold;
+      color: #0d47a1; /* Dark blue color */
+      margin-bottom: 40px; /* Increased space below text */
+      text-align: center;
+      text-transform: uppercase; /* Makes the text all uppercase */
+    }
   .container {
     display: flex;
     align-items: center;
@@ -187,6 +194,17 @@
 </head>
 <body>
 
+  <!-- Text that will disappear -->
+  <div class="not-profit" id="notProfitText">Not For Profit Website</div>
+
+ 
+  <script>
+    // JavaScript to hide the "Not For Profit Website" text
+    document.getElementById('fetchButton').addEventListener('click', function() {
+      var notProfitText = document.getElementById('notProfitText');
+      notProfitText.style.display = 'none';
+    });
+  </script>
   <div class="container">
     <label for="citySelect">Select City:</label>
     <select id="citySelect">
