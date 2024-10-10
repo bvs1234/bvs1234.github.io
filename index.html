@@ -182,13 +182,6 @@
     <select id="citySelect">
       <option value="">--Select a City--</option>
       <option value="Bhubaneswar">Bhubaneswar</option>
-      <option value="Bangalore">Bangalore</option>
-      <option value="Mumbai">Mumbai</option>
-      <option value="Chennai">Chennai</option>
-      <option value="Delhi">Delhi</option>
-      <option value="Hyderabad">Hyderabad</option>
-      <option value="Kolkata">Kolkata</option>
-      <option value="Patna">Patna</option>
       <option value="Pune">Pune</option>
     </select>
     
@@ -200,6 +193,8 @@
     <button id="fetchButton" disabled>Fetch Data</button>
   </div>
 
+  <div id="loadingMessage" style="display: none; font-size: 18px; color: #007bff;">Please wait, loading data...</div>
+  
   <div class="boxes-container" id="hostelBoxes"></div>
 
   <div id="pagination"></div>
@@ -213,47 +208,44 @@
 
     // Dummy area data for each city
     const areaData = {
-Bhubaneswar: ['Baramunda', 'Bargarh Road', 'Bhubaneswar Airport', 'Chandrasekharpur', 'Dumduma', 'Jharpada', 'Khandagiri', 'Kharavela Nagar', 'Laxmisagar', 'Mancheswar', 'Nandan Kanan', 'Patia', 'Rasulgarh', 'Sahid Nagar', 'Satya Nagar', 'Satyabhamapur', 'Sunderpada', 'Unit-1', 'Unit-2', 'VSS Nagar'],
-Bangalore: ['Anand Nagar', 'Banashankari', 'Banerghatta Road', 'Basavanagudi', 'Basaveshwar Nagar', 'Bellandur', 'BTM Layout', 'Chandra Layout', 'Cox Town', 'Domlur', 'Electronic City', 'Frazer Town', 'HBR Layout', 'Hebbal', 'Hennur', 'HSR Layout', 'Indiranagar', 'Jeevanbheemanagar', 'JP Nagar', 'Kadugodi', 'Kammanahalli', 'Kanakapura Road', 'Kengeri', 'Koramangala', 'Magadi Road', 'Mahadevapura', 'Malleshwaram', 'Marathahalli', 'Nagarbhavi', 'Peenya', 'Rajajinagar', 'Richmond Town', 'RT Nagar', 'Sahakara Nagar', 'Sarjapur Road', 'Seshadripuram', 'Vijayanagar', 'Whitefield', 'Yelahanka', 'Yeshwanthpur'],
-Mumbai: ['Airoli', 'Andheri', 'Borivali', 'Chakala', 'D N Nagar', 'Dadar', 'Dahisar', 'Ghatkopar', 'Jogeshwari', 'Juhu', 'Kalyan', 'Kandivali', 'Kurla', 'Lower Parel', 'Matunga', 'Mulund', 'Navi Mumbai', 'Nerul', 'Oshiwara', 'Parel', 'Poonam Nagar', 'Saki Naka', 'Santa Cruz', 'Sion', 'Thane', 'Vile Parle', 'Worli'],
-Chennai: ['Adyar', 'Alandur', 'Ambattur', 'Anna Nagar', 'Ashok Nagar', 'Avadi', 'Ayanavaram', 'Besant Nagar', 'Chromepet', 'Egmore', 'Guindy', 'K.K. Nagar', 'Kilpauk', 'Kotturpuram', 'Madhavaram', 'Manapakkam', 'Mandaveli', 'Mogappair', 'Nungambakkam', 'Pallavaram', 'Pazhavanthangal', 'Perungudi', 'Poonamallee', 'Porur', 'Purasawalkam', 'Royapettah', 'Royapuram', 'Saidapet', 'Saligramam', 'Selaiyur', 'Tambaram', 'Thiruvanmiyur', 'Thoraipakkam', 'Triplicane', 'Ullagaram', 'Vadapalani', 'Valasaravakkam', 'Velachery', 'Vepery', 'Villivakkam', 'Virugambakkam', 'West Mambalam'],
-Delhi: ['Ashok Vihar', 'Chanakyapuri', 'Defence Colony', 'Dwarka', 'East of Kailash', 'Greater Kailash', 'Green Park', 'Janakpuri', 'Jangpura', 'Kalkaji', 'Karol Bagh', 'Krishna Nagar', 'Lajpat Nagar', 'Laxmi Nagar', 'Mansarovar Garden', 'Mayur Vihar', 'Model Town', 'Naraina', 'New Friends Colony', 'Panchsheel Park', 'Paschim Vihar', 'Patel Nagar', 'Pitampura', 'Preet Vihar', 'Punjabi Bagh', 'Ramesh Nagar', 'Rohini', 'Safdarjung Enclave', 'Saket', 'Sarita Vihar', 'Shahdara', 'Shalimar Bagh', 'Shastri Nagar', 'South Extension', 'Subhash Nagar', 'Vasant Kunj', 'Vasant Vihar', 'Vikas Puri'],
-Hyderabad: ['Abids', 'Alwal', 'Ameerpet', 'Attapur', 'Banjara Hills', 'Begumpet', 'Bowenpally', 'Chandanagar', 'Chikkadpally', 'Dilsukhnagar', 'Gachibowli', 'Himayatnagar', 'Hitech City', 'Jubilee Hills', 'Karkhana', 'Kompally', 'Kondapur', 'Koti', 'Kukatpally', 'LB Nagar', 'Madhapur', 'Malakpet', 'Malkajgiri', 'Manikonda', 'Masab Tank', 'Mehdipatnam', 'Miyapur', 'Moosapet', 'Nampally', 'Nizampet', 'Panjagutta', 'Patancheru', 'Sainikpuri', 'Secunderabad', 'Shamirpet', 'Shamshabad', 'Somajiguda', 'SR Nagar', 'Taranagar', 'Tarnaka', 'Tolichowki', 'Uppal Kalan', 'Uppal', 'Vanasthalipuram', 'Yousufguda'],
-Kolkata: ['Alipore', 'Baguiati', 'Ballygunge', 'Baranagar', 'Barasat', 'Barrackpore', 'Behala', 'Bhowanipore', 'Dhakuria', 'Elgin Road', 'Esplanade', 'Garden Reach', 'Garia', 'Gariahat', 'Jadavpur', 'Joka', 'Kalighat', 'Kalyani', 'Kankurgachi', 'Kestopur', 'Khardah', 'Lake Town', 'Madhyamgram', 'Maheshtala', 'Maniktala', 'Mukundapur', 'Patuli', 'Phoolbagan', 'Rajarhat', 'Salt Lake', 'Santoshpur', 'Shyambazar', 'Sonarpur', 'Sovabazar', 'Taltala', 'Tangra', 'Ultadanga'],
-Patna: ['Anisabad', 'Ashiana Nagar', 'Bailey Road', 'Bairiya', 'Barh', 'Bikram', 'Chandmari Road', 'Danapur', 'Dhanarua', 'Digha', 'Doctors\' Colony', 'East Boring Canal Road', 'Fatuha', 'Fraser Road', 'Gardanibagh', 'Gola Road', 'Indrapuri', 'Jagdeo Path', 'Kadamkuan', 'Kankarbagh', 'Khagaul', 'Kumhrar', 'Lohanipur', 'Mahendru', 'Maner', 'Masaurhi', 'Mithapur', 'Nageshwar Colony', 'Naubatpur', 'Nehru Nagar', 'New Jakkanpur', 'Pataliputra Industrial Area', 'Patliputra Colony', 'Patna City', 'Phulwari Sharif', 'Rajendra Nagar', 'Rajiv Nagar', 'Ramkrishna Nagar', 'Rukanpura', 'Sandalpur', 'Sheikhpura', 'Shivpuri', 'Sipara', 'Srikrishna Puri', 'Transport Nagar'],
-Pune: ['Akurdi', 'Aundh', 'Balewadi', 'Baner', 'Bavdhan', 'Charholi', 'Chinchwad', 'Dapodi', 'Deccan Gymkhana', 'Dhanori', 'Fatima Nagar', 'Hinjewadi', 'Kalyani Nagar', 'Kharadi', 'Khadki', 'Kothrud', 'Loni Kalbhor', 'Magarpatta', 'Manjari', 'Market Yard', 'Narhe', 'Navi Peth', 'Pashan', 'Pimple Saudagar', 'Prabhat Road', 'Pune Camp', 'Sangamwadi', 'Wakad', 'Warje']
-
+      Bhubaneswar: ['Baramunda', 'Bargarh Road', 'Bhubaneswar Airport', 'Chandrasekharpur', 'Dumduma', 'Jharpada', 'Khandagiri', 'Kharavela Nagar', 'Laxmisagar', 'Mancheswar', 'Nandan Kanan', 'Patia', 'Rasulgarh', 'Sahid Nagar', 'Satya Nagar', 'Satyabhamapur', 'Sunderpada', 'Tigiria'],
+      Pune: ['Aundh', 'Bhosari', 'Bopodi', 'Chinchwad', 'Dapodi', 'Hinjewadi', 'Kalyani Nagar', 'Kothrud', 'Pimpri', 'Pune Camp', 'Pimpri Chinchwad', 'Shivaji Nagar']
     };
 
-    // Populate area selection based on city
     document.getElementById('citySelect').addEventListener('change', function() {
       currentCity = this.value;
       const areaSelect = document.getElementById('areaSelect');
-      areaSelect.innerHTML = '<option value="">--Select an Area--</option>'; // Reset area options
+      areaSelect.innerHTML = '<option value="">--Select an Area--</option>'; // Reset area select
       if (currentCity) {
         areaData[currentCity].forEach(area => {
           areaSelect.innerHTML += `<option value="${area}">${area}</option>`;
         });
-        areaSelect.disabled = false; // Enable area select
+        areaSelect.disabled = false;
       } else {
-        areaSelect.disabled = true; // Disable area select if no city is selected
-        document.getElementById('fetchButton').disabled = true; // Disable fetch button
+        areaSelect.disabled = true;
       }
     });
 
-    // Enable fetch button when area is selected
     document.getElementById('areaSelect').addEventListener('change', function() {
       currentArea = this.value;
-      document.getElementById('fetchButton').disabled = !currentArea; // Enable button if area is selected
+      document.getElementById('fetchButton').disabled = !currentArea;
     });
 
-    // Fetch and display hostel data based on city, area, and pagination
+    document.getElementById('fetchButton').addEventListener('click', function() {
+      currentPage = 1; // Reset to the first page
+      fetchHostelData(currentCity, currentArea, currentPage);
+    });
+
     function fetchHostelData(city, area, page) {
+      const loadingMessage = document.getElementById('loadingMessage');
+      loadingMessage.style.display = 'block'; // Show loading message
+
       fetch(`${apiUrl}?city=${city}&area=${area}&page=${page}`)
         .then(response => response.json())
         .then(data => {
           const boxesContainer = document.getElementById('hostelBoxes');
           boxesContainer.innerHTML = '';
+          loadingMessage.style.display = 'none'; // Hide loading message
 
           if (data.data.length === 0) {
             boxesContainer.innerHTML = '<p>No hostels found for this area in the selected city.</p>';
@@ -279,31 +271,27 @@ Pune: ['Akurdi', 'Aundh', 'Balewadi', 'Baner', 'Bavdhan', 'Charholi', 'Chinchwad
 
           renderPagination(data.totalPages);
         })
-        .catch(error => console.error('Error fetching data:', error));
+        .catch(error => {
+          console.error('Error fetching data:', error);
+          loadingMessage.style.display = 'none'; // Hide loading message even if there's an error
+        });
     }
 
-    // Render pagination
     function renderPagination(totalPages) {
       const paginationContainer = document.getElementById('pagination');
       paginationContainer.innerHTML = '';
 
       for (let i = 1; i <= totalPages; i++) {
-        const pageLink = document.createElement('div');
+        const pageLink = document.createElement('span');
+        pageLink.classList.add('page-link');
         pageLink.textContent = i;
-        pageLink.className = 'page-link';
-        pageLink.addEventListener('click', () => {
-          currentPage = i; // Set current page to the clicked page
-          fetchHostelData(currentCity, currentArea, currentPage); // Fetch data for the selected page
+        pageLink.addEventListener('click', function() {
+          currentPage = i;
+          fetchHostelData(currentCity, currentArea, currentPage);
         });
         paginationContainer.appendChild(pageLink);
       }
     }
-
-    // Fetch data when the button is clicked
-    document.getElementById('fetchButton').addEventListener('click', function() {
-      currentPage = 1; // Reset to the first page when fetching new data
-      fetchHostelData(currentCity, currentArea, currentPage);
-    });
   </script>
 </body>
 </html>
