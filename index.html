@@ -1,311 +1,215 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hostel Data</title>
-  <style>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+
+  .container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+  }
+
+  label {
+    font-size: 24px;
+    font-weight: bold;
+    margin-right: 10px;
+  }
+
+  #citySelect, #areaSelect {
+    width: 300px;
+    height: 40px;
+    font-size: 18px;
+    border-radius: 5px;
+    border: 2px solid #28a745;
+    margin-right: 10px;
+  }
+
+  #fetchButton {
+    padding: 10px 20px;
+    font-size: 18px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  #fetchButton:hover {
+    background-color: #28a745;
+  }
+
+  /* Ticket-style box */
+  .box {
+    position: relative;
+    background: linear-gradient(135deg, #f9f9f9 0%, #ffffff 100%);
+    border: 2px solid #dcdcdc;
+    border-radius: 15px;
+    padding: 20px;
+    margin: 10px;
+    width: 250px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    font-family: 'Arial', sans-serif;
+  }
+
+  /* Punch holes (for ticket effect) */
+  .box::before, .box::after {
+    content: '';
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: #ffffff;
+    border: 2px solid #dcdcdc;
+    border-radius: 50%;
+  }
+
+  .box::before {
+    top: 10px;
+    left: -20px;
+  }
+
+  .box::after {
+    bottom: 10px;
+    left: -20px;
+  }
+
+  /* Dotted tear-off effect */
+  .box::before, .box::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 10px;
+    background: repeating-linear-gradient(
+      to bottom,
+      #ffffff,
+      #ffffff 4px,
+      transparent 4px,
+      transparent 8px
+    );
+    border-radius: 0;
+  }
+
+  .box::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    width: 10px;
+    background: repeating-linear-gradient(
+      to bottom,
+      #ffffff,
+      #ffffff 4px,
+      transparent 4px,
+      transparent 8px
+    );
+    border-radius: 0;
+  }
+
+  .box p {
+    margin: 5px 0;
+    font-size: 16px;
+  }
+
+  .call-button, .whatsapp-button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
+    text-align: center;
+    border-radius: 5px;
+    text-decoration: none;
+    margin-top: 10px;
+    display: inline-block;
+  }
+
+  .whatsapp-button {
+    background-color: #25D366;
+  }
+
+  .call-button:hover {
+    background-color: #0056b3;
+  }
+
+  .whatsapp-button:hover {
+    background-color: #1ebe5b;
+  }
+
+  .boxes-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+  }
+
+  #pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+
+  .page-link {
+    padding: 10px;
+    margin: 0 5px;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+
+  .page-link:hover {
+    background-color: #0056b3;
+  }
+
+  /* Media query for mobile screens */
+  @media (max-width: 768px) {
     body {
-      font-family: Arial, sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      background-color: #f9f9f9;
-      margin: 0;
-      padding: 20px;
-      box-sizing: border-box;
+      padding: 10px;
     }
 
     .container {
-      display: flex;
-      align-items: center;
-      margin-bottom: 30px;
+      flex-direction: column;
+      align-items: stretch;
     }
 
     label {
-      font-size: 24px;
-      font-weight: bold;
-      margin-right: 10px;
+      margin-bottom: 10px;
+      font-size: 20px;
     }
 
-    #citySelect, #areaSelect {
-      width: 300px;
-      height: 40px;
-      font-size: 18px;
-      border-radius: 5px;
-      border: 2px solid #28a745;
-      margin-right: 10px;
-    }
-
-    #fetchButton {
-      padding: 10px 20px;
-      font-size: 18px;
-      background-color: #28a745;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    #fetchButton:hover {
-      background-color: #28a745;
-    }
-
-    .box {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-around;
-      border: 2px solid #ddd;
-      border-radius: 10px;
-      padding: 20px;
-      margin: 10px;
-      width: 250px;
-      background-color: white;
-      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-      position: relative;
-    }
-
-    .box::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      height: 100%;
-      width: 10px;
-      background: linear-gradient(to bottom, blue, green);
-      border-radius: 10px 0 0 10px;
-    }
-
-    .box p {
-      margin: 5px 0;
+    #citySelect, #areaSelect, #fetchButton {
+      width: 100%;
       font-size: 16px;
-    }
-
-    .call-button, .whatsapp-button {
-      background-color: #007bff;
-      color: white;
-      padding: 10px 15px;
-      text-align: center;
-      border-radius: 5px;
-      text-decoration: none;
-      margin-top: 10px;
-      display: inline-block;
-    }
-
-    .whatsapp-button {
-      background-color: #25D366; /* WhatsApp green color */
-    }
-
-    .call-button:hover {
-      background-color: #0056b3;
-    }
-
-    .whatsapp-button:hover {
-      background-color: #1ebe5b;
+      margin: 0 0 10px 0;
     }
 
     .boxes-container {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 20px;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .box {
+      width: 100%;
+      max-width: 300px;
     }
 
     #pagination {
-      display: flex;
-      justify-content: center;
-      margin-top: 20px;
+      flex-wrap: wrap;
     }
 
     .page-link {
-      padding: 10px;
-      margin: 0 5px;
-      background-color: #007bff;
-      color: white;
-      cursor: pointer;
-      border-radius: 5px;
+      padding: 8px;
+      font-size: 14px;
     }
-
-    .page-link:hover {
-      background-color: #0056b3;
-    }
-
-    /* Media query for mobile screens */
-    @media (max-width: 768px) {
-      body {
-        padding: 10px;
-      }
-
-      .container {
-        flex-direction: column;
-        align-items: stretch;
-      }
-
-      label {
-        margin-bottom: 10px;
-        font-size: 20px;
-      }
-
-      #citySelect, #areaSelect, #fetchButton {
-        width: 100%;
-        font-size: 16px;
-        margin: 0 0 10px 0;
-      }
-
-      .boxes-container {
-        flex-direction: column;
-        align-items: center;
-      }
-
-      .box {
-        width: 100%;
-        max-width: 300px;
-      }
-
-      #pagination {
-        flex-wrap: wrap;
-      }
-
-      .page-link {
-        padding: 8px;
-        font-size: 14px;
-      }
-    }
-  </style>
-</head>
-<body>
-
-  <div class="container">
-    <label for="citySelect">Select City:</label>
-    <select id="citySelect">
-      <option value="">--Select a City--</option>
-      <option value="Bhubaneswar">Bhubaneswar</option>
-      <option value="Bangalore">Bangalore</option>
-      <option value="Mumbai">Mumbai</option>
-      <option value="Chennai">Chennai</option>
-      <option value="Delhi">Delhi</option>
-      <option value="Hyderabad">Hyderabad</option>
-      <option value="Kolkata">Kolkata</option>
-      <option value="Patna">Patna</option>
-      <option value="Pune">Pune</option>
-    </select>
-    
-    <label for="areaSelect">Select Area:</label>
-    <select id="areaSelect" disabled>
-      <option value="">--Select an Area--</option>
-    </select>
-    
-    <button id="fetchButton" disabled>Fetch Data</button>
-  </div>
-
-  <div id="loadingMessage" style="display: none; font-size: 18px; color: #007bff;">Please wait, loading data...</div>
-  
-  <div class="boxes-container" id="hostelBoxes"></div>
-
-  <div id="pagination"></div>
-
-  <script>
-    const apiUrl = 'https://script.google.com/macros/s/AKfycbyEszcp7-5QOiE47Qu3jN2sxBHGkGwHIBZ-GQgonjRYBCWJhXjHaIBznd0lUPXdkce-QQ/exec';
-    let currentCity = '';
-    let currentArea = '';
-    let currentPage = 1;
-    const rowsPerPage = 100;
-
-    // Dummy area data for each city
-    const areaData = {
-      Bhubaneswar: ['Baramunda', 'Bargarh Road', 'Bhubaneswar Airport', 'Chandrasekharpur', 'Dumduma', 'Jharpada', 'Khandagiri', 'Kharavela Nagar', 'Laxmisagar', 'Mancheswar', 'Nandan Kanan', 'Patia', 'Rasulgarh', 'Sahid Nagar', 'Satya Nagar', 'Satyabhamapur', 'Sunderpada', 'Tigiria'],
-      Bangalore: ['Anand Nagar', 'Banashankari', 'Banerghatta Road', 'Basavanagudi', 'Basaveshwar Nagar', 'Bellandur', 'BTM Layout', 'Chandra Layout', 'Cox Town', 'Domlur', 'Electronic City', 'Frazer Town', 'HBR Layout', 'Hebbal', 'Hennur', 'HSR Layout', 'Indiranagar', 'Jeevanbheemanagar', 'JP Nagar', 'Kadugodi', 'Kammanahalli', 'Kanakapura Road', 'Kengeri', 'Koramangala', 'Magadi Road', 'Mahadevapura', 'Malleshwaram', 'Marathahalli', 'Nagarbhavi', 'Peenya', 'Rajajinagar', 'Richmond Town', 'RT Nagar', 'Sahakara Nagar', 'Sarjapur Road', 'Seshadripuram', 'Vijayanagar', 'Whitefield', 'Yelahanka', 'Yeshwanthpur'],
-      Mumbai: ['Airoli', 'Andheri', 'Borivali', 'Chakala', 'D N Nagar', 'Dadar', 'Dahisar', 'Ghatkopar', 'Jogeshwari', 'Juhu', 'Kalyan', 'Kandivali', 'Kurla', 'Lower Parel', 'Matunga', 'Mulund', 'Navi Mumbai', 'Nerul', 'Oshiwara', 'Parel', 'Poonam Nagar', 'Saki Naka', 'Santa Cruz', 'Sion', 'Thane', 'Vile Parle', 'Worli'],
-      Chennai: ['Adyar', 'Alandur', 'Ambattur', 'Anna Nagar', 'Ashok Nagar', 'Avadi', 'Ayanavaram', 'Besant Nagar', 'Chromepet', 'Egmore', 'Guindy', 'K.K. Nagar', 'Kilpauk', 'Kotturpuram', 'Madhavaram', 'Manapakkam', 'Mandaveli', 'Mogappair', 'Nungambakkam', 'Pallavaram', 'Pazhavanthangal', 'Perungudi', 'Poonamallee', 'Porur', 'Purasawalkam', 'Royapettah', 'Royapuram', 'Saidapet', 'Saligramam', 'Selaiyur', 'Tambaram', 'Thiruvanmiyur', 'Thoraipakkam', 'Triplicane', 'Ullagaram', 'Vadapalani', 'Valasaravakkam', 'Velachery', 'Vepery', 'Villivakkam', 'Virugambakkam', 'West Mambalam'],
-      Delhi: ['Ashok Vihar', 'Chanakyapuri', 'Defence Colony', 'Dwarka', 'East of Kailash', 'Greater Kailash', 'Green Park', 'Janakpuri', 'Jangpura', 'Kalkaji', 'Karol Bagh', 'Krishna Nagar', 'Lajpat Nagar', 'Laxmi Nagar', 'Mansarovar Garden', 'Mayur Vihar', 'Model Town', 'Naraina', 'New Friends Colony', 'Panchsheel Park', 'Paschim Vihar', 'Patel Nagar', 'Pitampura', 'Preet Vihar', 'Punjabi Bagh', 'Ramesh Nagar', 'Rohini', 'Safdarjung Enclave', 'Saket', 'Sarita Vihar', 'Shahdara', 'Shalimar Bagh', 'Shastri Nagar', 'South Extension', 'Subhash Nagar', 'Vasant Kunj', 'Vasant Vihar', 'Vikas Puri'],
-      Hyderabad: ['Abids', 'Alwal', 'Ameerpet', 'Attapur', 'Banjara Hills', 'Begumpet', 'Bowenpally', 'Chandanagar', 'Chikkadpally', 'Dilsukhnagar', 'Gachibowli', 'Himayatnagar', 'Hitech City', 'Jubilee Hills', 'Karkhana', 'Kompally', 'Kondapur', 'Koti', 'Kukatpally', 'LB Nagar', 'Madhapur', 'Malakpet', 'Malkajgiri', 'Manikonda', 'Masab Tank', 'Mehdipatnam', 'Miyapur', 'Moosapet', 'Nampally', 'Nizampet', 'Panjagutta', 'Patancheru', 'Sainikpuri', 'Secunderabad', 'Shamirpet', 'Shamshabad', 'Somajiguda', 'SR Nagar', 'Taranagar', 'Tarnaka', 'Tolichowki', 'Uppal Kalan', 'Uppal', 'Vanasthalipuram', 'Yousufguda'],
-      Kolkata: ['Alipore', 'Baguiati', 'Ballygunge', 'Baranagar', 'Barasat', 'Barrackpore', 'Behala', 'Bhowanipore', 'Dhakuria', 'Elgin Road', 'Esplanade', 'Garden Reach', 'Garia', 'Gariahat', 'Jadavpur', 'Joka', 'Kalighat', 'Kalyani', 'Kankurgachi', 'Kestopur', 'Khardah', 'Lake Town', 'Madhyamgram', 'Maheshtala', 'Maniktala', 'Mukundapur', 'Patuli', 'Phoolbagan', 'Rajarhat', 'Salt Lake', 'Santoshpur', 'Shyambazar', 'Sonarpur', 'Sovabazar', 'Taltala', 'Tangra', 'Ultadanga'],
-      Patna: ['Anisabad', 'Ashiana Nagar', 'Bailey Road', 'Bairiya', 'Barh', 'Bikram', 'Chandmari Road', 'Danapur', 'Dhanarua', 'Digha', 'Doctors\' Colony', 'East Boring Canal Road', 'Fatuha', 'Fraser Road', 'Gardanibagh', 'Gola Road', 'Indrapuri', 'Jagdeo Path', 'Kadamkuan', 'Kankarbagh', 'Khagaul', 'Kumhrar', 'Lohanipur', 'Mahendru', 'Maner', 'Masaurhi', 'Mithapur', 'Nageshwar Colony', 'Naubatpur', 'Nehru Nagar', 'New Jakkanpur', 'Pataliputra Industrial Area', 'Patliputra Colony', 'Patna City', 'Phulwari Sharif', 'Rajendra Nagar', 'Rajiv Nagar', 'Ramkrishna Nagar', 'Rukanpura', 'Sandalpur', 'Sheikhpura', 'Shivpuri', 'Sipara', 'Srikrishna Puri', 'Transport Nagar'],
-      Pune: ['Aundh', 'Bhosari', 'Bopodi', 'Chinchwad', 'Dapodi', 'Hinjewadi', 'Kalyani Nagar', 'Kothrud', 'Pimpri', 'Pune Camp', 'Pimpri Chinchwad', 'Shivaji Nagar']
-    };
-
-    document.getElementById('citySelect').addEventListener('change', function() {
-      currentCity = this.value;
-      const areaSelect = document.getElementById('areaSelect');
-      areaSelect.innerHTML = '<option value="">--Select an Area--</option>'; // Reset area select
-      if (currentCity) {
-        areaData[currentCity].forEach(area => {
-          areaSelect.innerHTML += `<option value="${area}">${area}</option>`;
-        });
-        areaSelect.disabled = false;
-      } else {
-        areaSelect.disabled = true;
-      }
-    });
-
-    document.getElementById('areaSelect').addEventListener('change', function() {
-      currentArea = this.value;
-      document.getElementById('fetchButton').disabled = !currentArea;
-    });
-
-    document.getElementById('fetchButton').addEventListener('click', function() {
-      currentPage = 1; // Reset to the first page
-      fetchHostelData(currentCity, currentArea, currentPage);
-    });
-
-function fetchHostelData(city, area, page) {
-  const loadingMessage = document.getElementById('loadingMessage');
-  loadingMessage.style.display = 'block'; // Show loading message
-
-  fetch(`${apiUrl}?city=${city}&area=${area}&page=${page}`)
-    .then(response => response.json())
-    .then(data => {
-      const boxesContainer = document.getElementById('hostelBoxes');
-      boxesContainer.innerHTML = '';
-      loadingMessage.style.display = 'none'; // Hide loading message
-
-      if (data.data.length === 0) {
-        boxesContainer.innerHTML = '<p>No hostels found for this area in the selected city.</p>';
-        document.getElementById('pagination').innerHTML = ''; // Clear pagination
-        return;
-      }
-
-      data.data.forEach((row, index) => {
-        const phoneNumberFormatted = row.phoneNumber.replace(/\D/g, ''); // Format the phone number for WhatsApp
-        const box = document.createElement('div');
-        box.classList.add('box');
-        box.innerHTML = `
-          <p><strong>S.No:</strong> ${(page - 1) * rowsPerPage + index + 1}</p>
-          <p><strong>Hostel Name:</strong> ${row.hostelName}</p>
-          <p><strong>Area:</strong> ${row.area}</p>
-          <p><strong>City:</strong> ${city}</p> <!-- Set city directly from the variable -->
-          <p><strong>Contact Number:</strong> <a href="tel:${row.phoneNumber}">${row.phoneNumber}</a></p>
-          <a href="tel:${row.phoneNumber}" class="call-button">Call</a>
-          <a href="https://wa.me/${phoneNumberFormatted}" class="whatsapp-button" target="_blank">WhatsApp</a>
-        `;
-        boxesContainer.appendChild(box);
-      });
-
-      renderPagination(data.totalPages);
-    })
-    .catch(error => {
-      console.error('Error fetching data:', error);
-      loadingMessage.style.display = 'none'; // Hide loading message even if there's an error
-    });
-}
-
-    function renderPagination(totalPages) {
-      const paginationContainer = document.getElementById('pagination');
-      paginationContainer.innerHTML = '';
-
-      for (let i = 1; i <= totalPages; i++) {
-        const pageLink = document.createElement('span');
-        pageLink.classList.add('page-link');
-        pageLink.textContent = i;
-        pageLink.addEventListener('click', function() {
-          currentPage = i;
-          fetchHostelData(currentCity, currentArea, currentPage);
-        });
-        paginationContainer.appendChild(pageLink);
-      }
-    }
-  </script>
-</body>
-</html>
+  }
+</style>
