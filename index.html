@@ -12,7 +12,7 @@
     align-items: center;
     justify-content: center;
     min-height: 100vh;
-    background-color: #f9f9f9;
+    background-color: #e3f2fd; /* Light blue background */
     margin: 0;
     padding: 20px;
     box-sizing: border-box;
@@ -28,21 +28,23 @@
     font-size: 24px;
     font-weight: bold;
     margin-right: 10px;
+    color: #0d47a1; /* Dark blue text */
   }
 
-  #citySelect, #areaSelect {
+  #citySelect,
+  #areaSelect {
     width: 300px;
     height: 40px;
     font-size: 18px;
     border-radius: 5px;
-    border: 2px solid #28a745;
+    border: 2px solid #0d47a1; /* Dark blue border */
     margin-right: 10px;
   }
 
   #fetchButton {
     padding: 10px 20px;
     font-size: 18px;
-    background-color: #28a745;
+    background-color: #0d47a1; /* Dark blue background */
     color: white;
     border: none;
     border-radius: 5px;
@@ -50,86 +52,45 @@
   }
 
   #fetchButton:hover {
-    background-color: #28a745;
+    background-color: #1565c0; /* Lighter blue on hover */
   }
 
-  /* Ticket-style box */
+  /* Colorful floral border */
   .box {
     position: relative;
-    background: linear-gradient(135deg, #f9f9f9 0%, #ffffff 100%);
-    border: 2px solid #dcdcdc;
-    border-radius: 15px;
+    background: linear-gradient(135deg, #ffffff 0%, #f9f9f9 100%);
     padding: 20px;
-    margin: 10px 10px 10px 0; /* Added right margin for separation */
+    margin: 10px 10px 10px 0; /* Right margin for separation */
     width: 250px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
-    font-family: 'Arial', sans-serif;
-  }
-
-  /* Punch holes (for ticket effect) */
-  .box::before, .box::after {
-    content: '';
-    position: absolute;
-    width: 10px;
-    height: 10px;
-    background: #ffffff;
-    border: 2px solid #dcdcdc;
-    border-radius: 50%;
+    border-radius: 15px;
+    overflow: hidden;
   }
 
   .box::before {
-    top: 10px;
-    left: -20px;
-  }
-
-  .box::after {
-    bottom: 10px;
-    left: -20px;
-  }
-
-  /* Dotted tear-off effect */
-  .box::before, .box::after {
-    content: "";
+    content: '';
     position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    width: 10px;
-    background: repeating-linear-gradient(
-      to bottom,
-      #ffffff,
-      #ffffff 4px,
-      transparent 4px,
-      transparent 8px
-    );
-    border-radius: 0;
-  }
-
-  .box::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    right: 0;
-    width: 10px;
-    background: repeating-linear-gradient(
-      to bottom,
-      #ffffff,
-      #ffffff 4px,
-      transparent 4px,
-      transparent 8px
-    );
-    border-radius: 0;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    border-radius: 15px;
+    background: linear-gradient(135deg, #0d47a1, #42a5f5, #90caf9); /* Blue gradient */
+    z-index: -1;
+    filter: blur(15px);
+    opacity: 0.8; /* Adjust the opacity for a softer look */
   }
 
   .box p {
     margin: 5px 0;
     font-size: 16px;
+    color: #0d47a1; /* Dark blue text */
   }
 
-  .call-button, .whatsapp-button {
-    background-color: #007bff;
+  .call-button,
+  .whatsapp-button {
+    background-color: #1976d2; /* Medium blue for buttons */
     color: white;
     padding: 10px 15px;
     text-align: center;
@@ -140,15 +101,15 @@
   }
 
   .whatsapp-button {
-    background-color: #25D366;
+    background-color: #25D366; /* WhatsApp green color */
   }
 
   .call-button:hover {
-    background-color: #0056b3;
+    background-color: #1565c0; /* Lighter blue on hover */
   }
 
   .whatsapp-button:hover {
-    background-color: #1ebe5b;
+    background-color: #1ebe5b; /* Green hover */
   }
 
   .boxes-container {
@@ -167,14 +128,14 @@
   .page-link {
     padding: 10px;
     margin: 0 5px;
-    background-color: #007bff;
+    background-color: #0d47a1; /* Dark blue background */
     color: white;
     cursor: pointer;
     border-radius: 5px;
   }
 
   .page-link:hover {
-    background-color: #0056b3;
+    background-color: #1565c0; /* Lighter blue on hover */
   }
 
   /* Media query for mobile screens */
@@ -191,9 +152,12 @@
     label {
       margin-bottom: 10px;
       font-size: 20px;
+      color: #0d47a1; /* Dark blue text */
     }
 
-    #citySelect, #areaSelect, #fetchButton {
+    #citySelect,
+    #areaSelect,
+    #fetchButton {
       width: 100%;
       font-size: 16px;
       margin: 0 0 10px 0;
