@@ -236,46 +236,46 @@
       fetchHostelData(currentCity, currentArea, currentPage);
     });
 
-    function fetchHostelData(city, area, page) {
-      const loadingMessage = document.getElementById('loadingMessage');
-      loadingMessage.style.display = 'block'; // Show loading message
+function fetchHostelData(city, area, page) {
+  const loadingMessage = document.getElementById('loadingMessage');
+  loadingMessage.style.display = 'block'; // Show loading message
 
-      fetch(`${apiUrl}?city=${city}&area=${area}&page=${page}`)
-        .then(response => response.json())
-        .then(data => {
-          const boxesContainer = document.getElementById('hostelBoxes');
-          boxesContainer.innerHTML = '';
-          loadingMessage.style.display = 'none'; // Hide loading message
+  fetch(`${apiUrl}?city=${city}&area=${area}&page=${page}`)
+    .then(response => response.json())
+    .then(data => {
+      const boxesContainer = document.getElementById('hostelBoxes');
+      boxesContainer.innerHTML = '';
+      loadingMessage.style.display = 'none'; // Hide loading message
 
-          if (data.data.length === 0) {
-            boxesContainer.innerHTML = '<p>No hostels found for this area in the selected city.</p>';
-            document.getElementById('pagination').innerHTML = ''; // Clear pagination
-            return;
-          }
+      if (data.data.length === 0) {
+        boxesContainer.innerHTML = '<p>No hostels found for this area in the selected city.</p>';
+        document.getElementById('pagination').innerHTML = ''; // Clear pagination
+        return;
+      }
 
-          data.data.forEach((row, index) => {
-            const phoneNumberFormatted = row.phoneNumber.replace(/\D/g, ''); // Format the phone number for WhatsApp
-            const box = document.createElement('div');
-            box.classList.add('box');
-            box.innerHTML = `
-              <p><strong>S.No:</strong> ${(page - 1) * rowsPerPage + index + 1}</p>
-              <p><strong>Hostel Name:</strong> ${row.hostelName}</p>
-              <p><strong>Area:</strong> ${row.area}</p>
-              <p><strong>City:</strong> ${row.city}</p>
-              <p><strong>Contact Number:</strong> <a href="tel:${row.phoneNumber}">${row.phoneNumber}</a></p>
-              <a href="tel:${row.phoneNumber}" class="call-button">Call</a>
-              <a href="https://wa.me/${phoneNumberFormatted}" class="whatsapp-button" target="_blank">WhatsApp</a>
-            `;
-            boxesContainer.appendChild(box);
-          });
+      data.data.forEach((row, index) => {
+        const phoneNumberFormatted = row.phoneNumber.replace(/\D/g, ''); // Format the phone number for WhatsApp
+        const box = document.createElement('div');
+        box.classList.add('box');
+        box.innerHTML = `
+          <p><strong>S.No:</strong> ${(page - 1) * rowsPerPage + index + 1}</p>
+          <p><strong>Hostel Name:</strong> ${row.hostelName}</p>
+          <p><strong>Area:</strong> ${row.area}</p>
+          <p><strong>City:</strong> ${city}</p> <!-- Set city directly from the variable -->
+          <p><strong>Contact Number:</strong> <a href="tel:${row.phoneNumber}">${row.phoneNumber}</a></p>
+          <a href="tel:${row.phoneNumber}" class="call-button">Call</a>
+          <a href="https://wa.me/${phoneNumberFormatted}" class="whatsapp-button" target="_blank">WhatsApp</a>
+        `;
+        boxesContainer.appendChild(box);
+      });
 
-          renderPagination(data.totalPages);
-        })
-        .catch(error => {
-          console.error('Error fetching data:', error);
-          loadingMessage.style.display = 'none'; // Hide loading message even if there's an error
-        });
-    }
+      renderPagination(data.totalPages);
+    })
+    .catch(error => {
+      console.error('Error fetching data:', error);
+      loadingMessage.style.display = 'none'; // Hide loading message even if there's an error
+    });
+}
 
     function renderPagination(totalPages) {
       const paginationContainer = document.getElementById('pagination');
